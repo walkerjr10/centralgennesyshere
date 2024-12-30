@@ -1,9 +1,12 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Building2, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { CompanyTypeCard } from "@/components/dashboard/CompanyTypeCard";
 import { TopNav } from "@/components/dashboard/TopNav";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 const companyTypes = [
   { type: "Holding", count: 8 },
@@ -15,6 +18,27 @@ const companyTypes = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/login");
+      }
+    };
+
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate("/login");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <TopNav />

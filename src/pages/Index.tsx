@@ -17,6 +17,22 @@ const companyTypes = [
   { type: "Retail", count: 7 },
 ];
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
+    }
+  }
+};
+
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  show: { y: 0, opacity: 1 }
+};
+
 const Index = () => {
   const navigate = useNavigate();
 
@@ -45,67 +61,76 @@ const Index = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <motion.h1 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-2xl font-bold text-gray-800"
-            >
-              Visão Geral
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-gray-600"
-            >
-              Análise consolidada - dezembro
-            </motion.p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-3xl font-bold text-gray-800">Visão Geral</h1>
+            <p className="text-gray-600 mt-2">Análise consolidada - dezembro</p>
+          </motion.div>
           
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <Button className="bg-[#4263EB] hover:bg-[#4263EB]/90 text-white">
+            <Button 
+              className="bg-[#4263EB] hover:bg-[#4263EB]/90 text-white font-medium px-6 py-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
               Gerar Relatório
             </Button>
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard
-            title="Empresas Ativas"
-            value="48"
-            change={{ value: "+12%", positive: true }}
-            icon={Building2}
-          />
-          <StatsCard
-            title="Receita Total"
-            value="R$ 12,50 mi"
-            change={{ value: "+15%", positive: true }}
-            icon={TrendingUp}
-          />
-          <StatsCard
-            title="Taxa de Conformidade"
-            value="84.4%"
-            change={{ value: "+5%", positive: true }}
-            icon={CheckCircle}
-          />
-          <StatsCard
-            title="Obrigações Atrasadas"
-            value="25"
-            change={{ value: "-3%", positive: false }}
-            icon={AlertTriangle}
-          />
-        </div>
+        <motion.div 
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+        >
+          <motion.div variants={item}>
+            <StatsCard
+              title="Empresas Ativas"
+              value="48"
+              change={{ value: "+12%", positive: true }}
+              icon={Building2}
+            />
+          </motion.div>
+          <motion.div variants={item}>
+            <StatsCard
+              title="Receita Total"
+              value="R$ 12,50 mi"
+              change={{ value: "+15%", positive: true }}
+              icon={TrendingUp}
+            />
+          </motion.div>
+          <motion.div variants={item}>
+            <StatsCard
+              title="Taxa de Conformidade"
+              value="84.4%"
+              change={{ value: "+5%", positive: true }}
+              icon={CheckCircle}
+            />
+          </motion.div>
+          <motion.div variants={item}>
+            <StatsCard
+              title="Obrigações Atrasadas"
+              value="25"
+              change={{ value: "-3%", positive: false }}
+              icon={AlertTriangle}
+            />
+          </motion.div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.4 }}
         >
-          <h2 className="text-xl font-semibold mb-6 text-gray-800">Tipos de Empresa</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800">Tipos de Empresa</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {companyTypes.map((company, index) => (
               <CompanyTypeCard

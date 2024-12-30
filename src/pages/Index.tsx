@@ -3,19 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Building2, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatsCard } from "@/components/dashboard/StatsCard";
-import { CompanyTypeCard } from "@/components/dashboard/CompanyTypeCard";
+import { CompanyTypeGrid } from "@/components/dashboard/CompanyTypeGrid";
 import { TopNav } from "@/components/dashboard/TopNav";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-
-const companyTypes = [
-  { type: "Holding", count: 8 },
-  { type: "Family Office", count: 5 },
-  { type: "Corporate", count: 12 },
-  { type: "Agro", count: 6 },
-  { type: "Industrial", count: 10 },
-  { type: "Retail", count: 7 },
-];
 
 const container = {
   hidden: { opacity: 0 },
@@ -132,16 +123,7 @@ const Index = () => {
           transition={{ delay: 0.4 }}
         >
           <h2 className="text-2xl font-semibold mb-6 text-[#4263EB]">Tipos de Empresa</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {companyTypes.map((company, index) => (
-              <CompanyTypeCard
-                key={company.type}
-                type={company.type}
-                count={company.count}
-                index={index}
-              />
-            ))}
-          </div>
+          <CompanyTypeGrid />
         </motion.div>
       </main>
     </div>

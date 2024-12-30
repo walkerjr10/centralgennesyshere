@@ -6,12 +6,12 @@ import { TopNav } from "@/components/dashboard/TopNav";
 import { Button } from "@/components/ui/button";
 
 const companyTypes = [
-  { type: "Holding", count: 8, image: "/lovable-uploads/79dbe2bf-e823-4085-a2c6-718d42a44879.png" },
-  { type: "Family Office", count: 5, image: "/lovable-uploads/79dbe2bf-e823-4085-a2c6-718d42a44879.png" },
-  { type: "Corporate", count: 12, image: "/lovable-uploads/79dbe2bf-e823-4085-a2c6-718d42a44879.png" },
-  { type: "Agro", count: 6, image: "/lovable-uploads/79dbe2bf-e823-4085-a2c6-718d42a44879.png" },
-  { type: "Industrial", count: 10, image: "/lovable-uploads/79dbe2bf-e823-4085-a2c6-718d42a44879.png" },
-  { type: "Retail", count: 7, image: "/lovable-uploads/79dbe2bf-e823-4085-a2c6-718d42a44879.png" },
+  { type: "Holding", count: 8, image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { type: "Family Office", count: 5, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { type: "Corporate", count: 12, image: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { type: "Agro", count: 6, image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { type: "Industrial", count: 10, image: "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { type: "Retail", count: 7, image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
 ];
 
 const Index = () => {
@@ -25,7 +25,7 @@ const Index = () => {
             <motion.h1 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="text-2xl font-bold"
+              className="text-2xl font-bold text-gray-800"
             >
               Visão Geral
             </motion.h1>
@@ -33,7 +33,7 @@ const Index = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-muted-foreground"
+              className="text-gray-600"
             >
               Análise consolidada - dezembro
             </motion.p>
@@ -43,7 +43,9 @@ const Index = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Button>Gerar Relatório</Button>
+            <Button variant="default" className="bg-[#1e1b4b] hover:bg-[#1e1b4b]/90">
+              Gerar Relatório
+            </Button>
           </motion.div>
         </div>
 
@@ -79,7 +81,7 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <h2 className="text-xl font-semibold mb-6">Tipos de Empresa</h2>
+          <h2 className="text-xl font-semibold mb-6 text-gray-800">Tipos de Empresa</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {companyTypes.map((company, index) => (
               <CompanyTypeCard

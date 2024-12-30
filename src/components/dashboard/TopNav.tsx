@@ -16,20 +16,20 @@ export function TopNav() {
     <motion.div
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="bg-white border-b px-4 py-3 flex items-center justify-between"
+      className="bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-50"
     >
       <div className="flex items-center gap-x-4">
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="text-gray-600">
           <Menu className="h-5 w-5" />
         </Button>
-        <span className="font-semibold text-xl">Gennesys</span>
+        <span className="font-semibold text-xl text-gray-800">Gennesys</span>
       </div>
-      <nav className="hidden md:flex items-center gap-x-4">
+      <nav className="hidden md:flex items-center gap-x-6">
         {menuItems.map((item) => (
           <a
             key={item.href}
             href={item.href}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
             {item.label}
           </a>

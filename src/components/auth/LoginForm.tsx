@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, stagger } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EyeIcon, EyeOffIcon, LoginIcon } from "./AuthIcons";
@@ -37,104 +37,52 @@ export const LoginForm = () => {
     }
   };
 
-  const formVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3 }
-    },
-  };
-
-  const logoVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  const buttonVariants = {
-    rest: { scale: 1 },
-    hover: { scale: 1.02 },
-    tap: { scale: 0.98 },
-  };
-
   return (
     <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={formVariants}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className="w-full max-w-md space-y-8"
     >
       {isMobile && (
-        <motion.div 
-          variants={logoVariants}
-          className="text-center mb-8"
-        >
+        <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-[#4263EB] mb-1">
-            Central Gennesys
+            Gennesys HUB
           </h1>
           <p className="text-sm text-gray-600">
-            Versão Mobile
+            Mobile Version
           </p>
-        </motion.div>
+        </div>
       )}
 
       <form onSubmit={handleLogin} className="space-y-6">
-        <motion.div variants={itemVariants} className="space-y-2">
+        <div className="space-y-2">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email
           </label>
-          <motion.div
-            whileFocus={{ scale: 1.01 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="seu@email.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4263EB]/20 transition-all"
-              required
-            />
-          </motion.div>
-        </motion.div>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="seu@email.com"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
 
-        <motion.div variants={itemVariants} className="space-y-2">
+        <div className="space-y-2">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Senha
           </label>
-          <motion.div
-            whileFocus={{ scale: 1.01 }}
-            transition={{ duration: 0.2 }}
-            className="relative"
-          >
+          <div className="relative">
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4263EB]/20 transition-all"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
               required
             />
             <button
@@ -144,10 +92,10 @@ export const LoginForm = () => {
             >
               {showPassword ? <EyeOffIcon /> : <EyeIcon />}
             </button>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
-        <motion.div variants={itemVariants} className="flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex items-center">
             <input
               id="remember"
@@ -161,30 +109,22 @@ export const LoginForm = () => {
           <a href="#" className="text-sm text-[#4263EB] hover:underline">
             Esqueceu a senha?
           </a>
-        </motion.div>
+        </div>
 
-        <motion.div
-          variants={itemVariants}
-          whileHover="hover"
-          whileTap="tap"
-          initial="rest"
-          animate="rest"
+        <Button 
+          className="w-full bg-[#4263EB] hover:bg-[#4263EB]/90 text-white flex items-center justify-center gap-2"
+          disabled={loading}
         >
-          <Button 
-            className="w-full bg-[#4263EB] hover:bg-[#4263EB]/90 text-white flex items-center justify-center gap-2"
-            disabled={loading}
-          >
-            <span>{loading ? "Entrando..." : "Entrar"}</span>
-            <LoginIcon />
-          </Button>
-        </motion.div>
+          <span>{loading ? "Entrando..." : "Entrar"}</span>
+          <LoginIcon />
+        </Button>
 
-        <motion.p variants={itemVariants} className="text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-gray-600">
           Não tem uma conta?{" "}
           <a href="#" className="text-[#4263EB] hover:underline">
             Criar conta
           </a>
-        </motion.p>
+        </p>
       </form>
     </motion.div>
   );

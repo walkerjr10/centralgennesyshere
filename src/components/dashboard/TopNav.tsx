@@ -1,6 +1,15 @@
 import { motion } from "framer-motion";
-import { Menu } from "lucide-react";
+import { Menu, User, LogOut } from "lucide-react";
 import { Button } from "../ui/button";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { label: "Dashboard", href: "/" },
@@ -12,6 +21,15 @@ const menuItems = [
 ];
 
 export function TopNav() {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      navigate("/login");
+    }
+  };
+
   return (
     <motion.div
       initial={{ y: -20, opacity: 0 }}
@@ -24,17 +42,38 @@ export function TopNav() {
         </Button>
         <span className="font-semibold text-xl text-gray-800">Gennesys</span>
       </div>
-      <nav className="hidden md:flex items-center gap-x-6">
-        {menuItems.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            {item.label}
-          </a>
-        ))}
-      </nav>
+      
+      <div className="flex items-center gap-x-6">
+        <nav className="hidden md:flex items-center gap-x-6">
+          {menuItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-gray-100">
+                  <User className="h-4 w-4 text-gray-600" />
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Sair</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </motion.div>
   );
 }

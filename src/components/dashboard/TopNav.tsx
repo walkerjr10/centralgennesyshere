@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Menu, User, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import {
@@ -34,13 +34,10 @@ export function TopNav() {
     <motion.div
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50"
+      className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50"
     >
       <div className="flex items-center gap-x-4">
-        <Button variant="ghost" size="icon" className="text-gray-600">
-          <Menu className="h-5 w-5" />
-        </Button>
-        <span className="font-semibold text-xl text-gray-800">Gennesys</span>
+        <span className="font-semibold text-2xl text-[#4263EB]">Gennesys</span>
       </div>
       
       <div className="flex items-center gap-x-6">
@@ -49,7 +46,7 @@ export function TopNav() {
             <a
               key={item.href}
               href={item.href}
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-sm text-gray-600 hover:text-[#4263EB] transition-colors"
             >
               {item.label}
             </a>

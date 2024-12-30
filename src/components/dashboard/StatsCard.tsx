@@ -19,7 +19,7 @@ export function StatsCard({ title, value, change, icon: Icon }: StatsCardProps) 
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="p-6 bg-white hover:shadow-md transition-shadow">
+      <Card className="p-6 bg-white hover:shadow-md transition-shadow border border-gray-100">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-600">{title}</p>
@@ -28,7 +28,7 @@ export function StatsCard({ title, value, change, icon: Icon }: StatsCardProps) 
               {change.value} from last month
             </p>
           </div>
-          <div className="bg-gray-100 p-3 rounded-full">
+          <div className="bg-gray-50 p-3 rounded-full">
             <Icon className="w-6 h-6 text-gray-600" />
           </div>
         </div>

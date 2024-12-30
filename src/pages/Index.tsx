@@ -6,12 +6,12 @@ import { TopNav } from "@/components/dashboard/TopNav";
 import { Button } from "@/components/ui/button";
 
 const companyTypes = [
-  { type: "Holding", count: 8, image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
-  { type: "Family Office", count: 5, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
-  { type: "Corporate", count: 12, image: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
-  { type: "Agro", count: 6, image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
-  { type: "Industrial", count: 10, image: "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
-  { type: "Retail", count: 7, image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" },
+  { type: "Holding", count: 8 },
+  { type: "Family Office", count: 5 },
+  { type: "Corporate", count: 12 },
+  { type: "Agro", count: 6 },
+  { type: "Industrial", count: 10 },
+  { type: "Retail", count: 7 },
 ];
 
 const Index = () => {
@@ -43,7 +43,7 @@ const Index = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Button variant="default" className="bg-[#1e1b4b] hover:bg-[#1e1b4b]/90">
+            <Button className="bg-[#4263EB] hover:bg-[#4263EB]/90 text-white">
               Gerar Relatório
             </Button>
           </motion.div>
@@ -88,7 +88,6 @@ const Index = () => {
                 key={company.type}
                 type={company.type}
                 count={company.count}
-                image={company.image}
                 index={index}
               />
             ))}

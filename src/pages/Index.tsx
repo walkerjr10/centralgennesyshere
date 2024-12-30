@@ -75,13 +75,14 @@ const Index = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Button 
-              className="bg-[#4263EB] hover:bg-[#4263EB]/90 text-white font-medium px-6 py-2"
+            <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Gerar Relatório
-            </Button>
+              <Button className="bg-[#4263EB] hover:bg-[#4263EB]/90 text-white font-medium px-6 py-2">
+                Gerar Relatório
+              </Button>
+            </motion.div>
           </motion.div>
         </div>
 

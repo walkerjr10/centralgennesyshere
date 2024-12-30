@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { EyeIcon, EyeOffIcon, LoginIcon } from "./AuthIcons";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +14,7 @@ export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +44,17 @@ export const LoginForm = () => {
       transition={{ duration: 0.5 }}
       className="w-full max-w-md space-y-8"
     >
+      {isMobile && (
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            Gennesys HUB
+          </h1>
+          <p className="text-sm text-gray-600">
+            Mobile Version
+          </p>
+        </div>
+      )}
+
       <form onSubmit={handleLogin} className="space-y-6">
         <div className="space-y-2">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">

@@ -55,9 +55,9 @@ export function StatsCard({ title, value, change, icon: Icon }: StatsCardProps) 
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="bg-gray-50 p-3 rounded-full"
+            className="bg-[#4263EB]/10 p-3 rounded-full"
           >
-            <Icon className="w-6 h-6 text-gray-600" />
+            <Icon className="w-6 h-6 text-[#4263EB]" />
           </motion.div>
         </div>
       </Card>

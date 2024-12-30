@@ -46,7 +46,7 @@ export const LoginForm = () => {
     >
       {isMobile && (
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          <h1 className="text-2xl font-bold text-[#4263EB] mb-1">
             Gennesys HUB
           </h1>
           <p className="text-sm text-gray-600">

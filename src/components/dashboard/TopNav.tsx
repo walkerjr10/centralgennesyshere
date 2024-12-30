@@ -29,7 +29,7 @@ export const TopNav = () => {
         <div className="flex items-center space-x-2">
           <a className="flex items-center space-x-2" href="/">
             <span className="font-bold text-primary sm:inline-block">
-              Gennesys HUB
+              Visão Geral
             </span>
           </a>
         </div>

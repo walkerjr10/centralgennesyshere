@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Card } from "../ui/card";
 
@@ -21,24 +21,15 @@ const companyImages: { [key: string]: string } = {
 export function CompanyTypeCard({ type, count, index }: CompanyTypeCardProps) {
   const controls = useAnimation();
   const cardRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !isVisible) {
-          setIsVisible(true);
-          controls.start({
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.4, delay: index * 0.1 }
-          });
+        if (entry.isIntersecting) {
+          controls.start({ opacity: 1, y: 0 });
         }
       },
-      {
-        threshold: 0.1,
-        rootMargin: "50px",
-      }
+      { threshold: 0.1 }
     );
 
     if (cardRef.current) {
@@ -50,55 +41,34 @@ export function CompanyTypeCard({ type, count, index }: CompanyTypeCardProps) {
         observer.unobserve(cardRef.current);
       }
     };
-  }, [controls, index, isVisible]);
-
-  // Memoize animation variants
-  const cardVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    hover: { 
-      scale: 1.02,
-      transition: { duration: 0.2 }
-    }
-  };
+  }, [controls]);
 
   return (
     <motion.div
       ref={cardRef}
-      initial="initial"
+      initial={{ opacity: 0, y: 20 }}
       animate={controls}
-      whileHover="hover"
-      variants={cardVariants}
+      transition={{ duration: 0.3, delay: index * 0.1 }}
+      whileHover={{ y: -5 }}
       layout
     >
-      <Card className="relative overflow-hidden h-48 group cursor-pointer hover:shadow-lg transition-all duration-300 bg-white border border-gray-100">
+      <Card className="relative overflow-hidden h-48 group cursor-pointer bg-white border border-gray-100">
         <div className="absolute inset-0 w-full h-full">
           <img
             src={companyImages[type]}
             alt={type}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover"
             loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20" />
         </div>
         
         <div className="relative p-6 text-white h-full flex flex-col justify-between z-10">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: index * 0.1 + 0.2 }}
-          >
-            <h3 className="text-2xl font-semibold mb-2">{type}</h3>
-          </motion.div>
-          
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: index * 0.1 + 0.3 }}
-            className="text-lg font-medium"
-          >
+          <h3 className="text-2xl font-semibold mb-2">{type}</h3>
+          <p className="text-lg font-medium">
             {count} {count === 1 ? 'empresa' : 'empresas'}
-          </motion.p>
+          </p>
         </div>
       </Card>
     </motion.div>

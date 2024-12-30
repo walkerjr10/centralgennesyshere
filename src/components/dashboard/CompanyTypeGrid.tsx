@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { motion } from "framer-motion";
 import { CompanyTypeCard } from "./CompanyTypeCard";
 
 const companyTypes = [

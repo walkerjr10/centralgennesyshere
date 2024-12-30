@@ -26,9 +26,22 @@ export function TopNav() {
   const { toast } = useToast();
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      // Show success toast and navigate to login
+      toast({
+        description: "Logout realizado com sucesso",
+        duration: 2000,
+      });
       navigate("/login");
+    } catch (error: any) {
+      // Show error toast if logout fails
+      toast({
+        description: error.message || "Erro ao fazer logout",
+        variant: "destructive",
+      });
     }
   };
 

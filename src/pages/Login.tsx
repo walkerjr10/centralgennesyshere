@@ -5,31 +5,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthFeature } from "@/components/auth/AuthFeature";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { DocumentIcon, TeamIcon, ChartIcon } from "@/components/auth/AuthIcons";
-import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkUser = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          navigate("/");
-        }
-      } catch (error: any) {
-        console.error("Session check error:", error);
-        toast.error("Erro ao verificar sessão");
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/");
       }
     };
 
     checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
         navigate("/");
-      } else if (event === 'SIGNED_OUT') {
-        // Clear any local state if needed
       }
     });
 

@@ -74,12 +74,9 @@ const Login = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <a href="#" className="inline-flex items-center text-white hover:opacity-80 transition-opacity">
-            <span className="mr-2">Acesse nossa documentação completa</span>
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M17 8L21 12M21 12L17 16M21 12H3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </a>
+          <span className="inline-flex items-center text-white opacity-80">
+            Acesse nossa documentação completa
+          </span>
         </motion.div>
       </div>
 

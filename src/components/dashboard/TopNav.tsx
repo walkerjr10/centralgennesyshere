@@ -10,6 +10,7 @@ import {
 } from "../ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 const menuItems = [
   { label: "Dashboard", href: "/" },
@@ -22,11 +23,24 @@ const menuItems = [
 
 export function TopNav() {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (!error) {
       navigate("/login");
+    }
+  };
+
+  const handleMenuClick = (href: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (href === "/") {
+      navigate(href);
+    } else {
+      toast({
+        description: "Esta funcionalidade será implementada em breve.",
+        duration: 2000,
+      });
     }
   };
 
@@ -46,6 +60,7 @@ export function TopNav() {
             <a
               key={item.href}
               href={item.href}
+              onClick={handleMenuClick(item.href)}
               className="text-sm text-gray-600 hover:text-[#4263EB] transition-colors"
             >
               {item.label}

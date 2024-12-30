@@ -66,7 +66,7 @@ const Index = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-3xl font-bold text-gray-800">Visão Geral</h1>
+            <h1 className="text-3xl font-bold text-[#4263EB]">Visão Geral</h1>
             <p className="text-gray-600 mt-2">Análise consolidada - dezembro</p>
           </motion.div>
           
@@ -131,7 +131,7 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <h2 className="text-2xl font-semibold mb-6 text-gray-800">Tipos de Empresa</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-[#4263EB]">Tipos de Empresa</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {companyTypes.map((company, index) => (
               <CompanyTypeCard

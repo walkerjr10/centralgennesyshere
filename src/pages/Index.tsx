@@ -41,7 +41,7 @@ const Index = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
 
   // Use React Query for session management
-  const { data: session, isLoading } = useQuery({
+  const { data: session, isLoading: sessionLoading } = useQuery({
     queryKey: ['session'],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -50,8 +50,24 @@ const Index = () => {
     retry: false
   });
 
+  // Fetch user profile to get role
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: ['profile', session?.user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session?.user?.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id
+  });
+
   useEffect(() => {
-    if (!isLoading && !session) {
+    if (!sessionLoading && !session) {
       navigate("/login");
     }
 
@@ -62,9 +78,16 @@ const Index = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, session, isLoading]);
+  }, [navigate, session, sessionLoading]);
 
-  if (isLoading) {
+  // Reset to dashboard if user is not admin and tries to access users section
+  useEffect(() => {
+    if (profile && profile.role !== 'admin' && activeSection === 'users') {
+      setActiveSection('dashboard');
+    }
+  }, [profile, activeSection]);
+
+  if (sessionLoading || profileLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-pulse text-[#4263EB]">Loading...</div>
@@ -72,9 +95,11 @@ const Index = () => {
     );
   }
 
+  const isAdmin = profile?.role === 'admin';
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <TopNav onSectionChange={setActiveSection} />
+      <TopNav onSectionChange={setActiveSection} isAdmin={isAdmin} />
       
       <main className="container mx-auto px-4 py-8">
         <Suspense fallback={
@@ -82,7 +107,7 @@ const Index = () => {
             <div className="animate-pulse text-[#4263EB]">Loading section...</div>
           </div>
         }>
-          {activeSection === "users" ? (
+          {activeSection === "users" && isAdmin ? (
             <UsersSection />
           ) : (
             <>

@@ -31,7 +31,7 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen">
-      <div className="hidden lg:flex lg:w-1/2 bg-[#4263EB] text-white flex-col justify-between h-screen p-8">
+      <div className="hidden lg:flex lg:w-1/2 bg-[#4263EB] text-white flex-col justify-between min-h-screen p-8">
         <div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -74,7 +74,7 @@ const Login = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex items-center justify-center text-sm opacity-80 mt-8"
+          className="flex items-center justify-center text-sm opacity-80"
         >
           <CopyrightIcon className="w-4 h-4 mr-2" />
           <span>Todos os direitos reservados à Gennesys 2025</span>

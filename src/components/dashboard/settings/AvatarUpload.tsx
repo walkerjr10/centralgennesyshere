@@ -37,6 +37,19 @@ export function AvatarUpload({ url, onUploadComplete, size = "lg" }: AvatarUploa
 
       const filePath = `${userId}/avatar.${fileExt}`;
 
+      // First, remove the old avatar if it exists
+      if (url) {
+        const oldFilePath = url.split('/').slice(-2).join('/');
+        const { error: deleteError } = await supabase.storage
+          .from('avatars')
+          .remove([oldFilePath]);
+        
+        if (deleteError) {
+          console.error('Error deleting old avatar:', deleteError);
+        }
+      }
+
+      // Upload the new avatar
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, { upsert: true });

@@ -98,9 +98,13 @@ const UsersSection = () => {
       />
 
       <UserFormModal 
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
         user={selectedUser}
+        onSuccess={() => {
+          // Refresh the profiles query
+          window.location.reload();
+        }}
       />
     </div>
   );

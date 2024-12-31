@@ -12,18 +12,13 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Profile } from "./types";
 
 interface UserFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedUser?: {
-    id: string;
-    full_name?: string;
-    username?: string;
-    role?: string;
-    status?: string;
-  };
-  onSuccess: () => void;
+  user?: Profile;
+  onSuccess?: () => void;
 }
 
 interface FormValues {
@@ -33,38 +28,51 @@ interface FormValues {
   status?: string;
 }
 
-export function UserFormModal({ open, onOpenChange, selectedUser, onSuccess }: UserFormModalProps) {
+export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormModalProps) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm<FormValues>();
+  const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm<FormValues>({
+    defaultValues: {
+      full_name: user?.full_name || '',
+      username: user?.username || '',
+      role: user?.role || 'user',
+      status: user?.status || 'active'
+    }
+  });
 
   const onSubmit = async (values: FormValues) => {
     try {
       setLoading(true);
 
-      if (selectedUser) {
+      if (user) {
         // Update existing user
         const { error } = await supabase
           .from("profiles")
           .update(values)
-          .eq("id", selectedUser.id);
+          .eq("id", user.id);
 
         if (error) throw error;
       } else {
         // Create new user
         const { error } = await supabase
           .from("profiles")
-          .insert(values);
+          .insert({
+            ...values,
+            role: values.role || 'user',
+            status: values.status || 'active'
+          });
 
         if (error) throw error;
       }
 
       toast({
-        title: `User ${selectedUser ? "updated" : "created"} successfully`,
+        title: `User ${user ? "updated" : "created"} successfully`,
         variant: "default",
       });
       
-      onSuccess();
+      if (onSuccess) {
+        onSuccess();
+      }
       onOpenChange(false);
       reset();
     } catch (error) {
@@ -83,7 +91,7 @@ export function UserFormModal({ open, onOpenChange, selectedUser, onSuccess }: U
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{selectedUser ? "Edit User" : "Create User"}</DialogTitle>
+          <DialogTitle>{user ? "Edit User" : "Create User"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
@@ -92,7 +100,6 @@ export function UserFormModal({ open, onOpenChange, selectedUser, onSuccess }: U
             </label>
             <Input
               id="full_name"
-              defaultValue={selectedUser?.full_name}
               {...register("full_name")}
             />
           </div>
@@ -103,7 +110,6 @@ export function UserFormModal({ open, onOpenChange, selectedUser, onSuccess }: U
             </label>
             <Input
               id="username"
-              defaultValue={selectedUser?.username}
               {...register("username")}
             />
           </div>
@@ -113,7 +119,7 @@ export function UserFormModal({ open, onOpenChange, selectedUser, onSuccess }: U
               Role
             </label>
             <Select
-              defaultValue={selectedUser?.role}
+              value={user?.role || 'user'}
               onValueChange={(value) => setValue("role", value)}
             >
               <SelectTrigger>
@@ -131,7 +137,7 @@ export function UserFormModal({ open, onOpenChange, selectedUser, onSuccess }: U
               Status
             </label>
             <Select
-              defaultValue={selectedUser?.status}
+              value={user?.status || 'active'}
               onValueChange={(value) => setValue("status", value)}
             >
               <SelectTrigger>
@@ -154,7 +160,7 @@ export function UserFormModal({ open, onOpenChange, selectedUser, onSuccess }: U
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Loading..." : selectedUser ? "Update" : "Create"}
+              {loading ? "Loading..." : user ? "Update" : "Create"}
             </Button>
           </div>
         </form>

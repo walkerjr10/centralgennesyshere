@@ -40,7 +40,7 @@ export function UserFormModal({ isOpen, onOpenChange, onSubmit, userToEdit }: Us
           .from('profiles')
           .update({
             full_name: data.full_name,
-            username: data.username,
+            username: data.username,  // Added username to the update operation
             role: data.role,
             status: data.status
           })

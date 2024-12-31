@@ -173,6 +173,5 @@ export default function Users() {
         </Table>
       </div>
     </div>
-  </div>
-);
+  );
 }

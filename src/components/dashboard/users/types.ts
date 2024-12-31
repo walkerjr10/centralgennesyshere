@@ -10,6 +10,8 @@ export interface Profile {
 export interface UserSearchProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
+  statusFilter: string;
+  onStatusFilterChange: (value: string) => void;
 }
 
 export interface UsersTableProps {

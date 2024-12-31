@@ -74,7 +74,7 @@ const Login = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex items-center justify-center text-sm opacity-80"
+          className="flex items-center justify-center text-sm opacity-80 mt-8"
         >
           <CopyrightIcon className="w-4 h-4 mr-2" />
           <span>Todos os direitos reservados à Gennesys 2025</span>

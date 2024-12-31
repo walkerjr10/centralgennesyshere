@@ -46,7 +46,7 @@ const Login = () => {
               Bem-vindo à<br />Gennesys
             </h1>
             <p className="text-xl opacity-90 mb-12">
-              Gerencie suas empresas de forma inteligente e eficiente
+              Gerencia suas empresas de forma inteligente e eficiente com a AI Gennesys
             </p>
           </motion.div>
 

@@ -84,12 +84,20 @@ const UsersSection = () => {
     if (!userToDelete) return;
 
     try {
-      const { error } = await supabase
+      // First delete from auth.users using an edge function
+      const { error: deleteAuthError } = await supabase.functions.invoke('delete-user', {
+        body: { userId: userToDelete.id }
+      });
+
+      if (deleteAuthError) throw deleteAuthError;
+
+      // Then delete from profiles
+      const { error: deleteProfileError } = await supabase
         .from("profiles")
         .delete()
         .eq("id", userToDelete.id);
 
-      if (error) throw error;
+      if (deleteProfileError) throw deleteProfileError;
 
       // Refresh both queries
       await Promise.all([

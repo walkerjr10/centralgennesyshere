@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Profile, FormValues } from "./types";
 import { UserFormFields } from "./form/UserFormFields";
 import { UserRoleSelect } from "./form/UserRoleSelect";
@@ -19,6 +19,7 @@ interface UserFormModalProps {
 export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormModalProps) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  
   const form = useForm<FormValues>({
     defaultValues: {
       full_name: user?.full_name || '',
@@ -48,7 +49,23 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
           .eq("id", user.id);
 
         if (error) throw error;
+
+        toast({
+          title: "Usuário atualizado",
+          description: "As informações do usuário foram atualizadas com sucesso.",
+          variant: "default",
+        });
       } else {
+        // Validate password match
+        if (values.password !== values.confirmPassword) {
+          toast({
+            title: "Erro",
+            description: "As senhas não conferem.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         // Create new user with auth
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: values.email!,
@@ -63,13 +80,21 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
           }
         });
 
-        if (authError) throw authError;
-      }
+        if (authError) {
+          toast({
+            title: "Erro na criação do usuário",
+            description: authError.message,
+            variant: "destructive",
+          });
+          return;
+        }
 
-      toast({
-        title: `Usuário ${user ? "atualizado" : "criado"} com sucesso`,
-        variant: "default",
-      });
+        toast({
+          title: "Usuário criado",
+          description: "Um novo usuário foi criado com sucesso.",
+          variant: "default",
+        });
+      }
       
       if (onSuccess) {
         onSuccess();
@@ -90,7 +115,7 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>{user ? "Editar Usuário" : "Criar Usuário"}</DialogTitle>
         </DialogHeader>

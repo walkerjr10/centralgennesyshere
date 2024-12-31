@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { FormValues } from "../types";
+import { FormValues, Profile } from "../types";
 
 interface UserFormFieldsProps {
   form: UseFormReturn<FormValues>;

@@ -16,3 +16,23 @@ export interface Profile {
   status: string | null;
   last_sign_in: string | null;
 }
+
+export interface UserSearchProps {
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+  statusFilter: string;
+  onStatusFilterChange: (value: string) => void;
+}
+
+export interface UsersPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+export interface UsersTableProps {
+  profiles: Profile[] | null;
+  isLoading: boolean;
+  filteredProfiles: Profile[] | null;
+  onEditUser: (user: Profile) => void;
+}

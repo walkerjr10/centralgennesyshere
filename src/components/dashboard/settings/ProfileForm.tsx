@@ -28,6 +28,7 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
   // Initialize form with profile data when it becomes available
   useEffect(() => {
     if (profile) {
+      console.log("Setting profile data:", profile); // Debug log
       setFormProfile({
         username: profile.username || "",
         full_name: profile.full_name || "",

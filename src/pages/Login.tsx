@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthFeature } from "@/components/auth/AuthFeature";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { DocumentIcon, TeamIcon, ChartIcon } from "@/components/auth/AuthIcons";
-import { CopyrightIcon } from "lucide-react";
+import { CopyrightIcon, ShieldCheckIcon } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -66,6 +66,11 @@ const Login = () => {
               icon={<ChartIcon />}
               title="Análises Avançadas"
               description="Insights e relatórios detalhados"
+            />
+            <AuthFeature
+              icon={<ShieldCheckIcon className="w-6 h-6" />}
+              title="Segurança Avançada"
+              description="Proteção total dos seus dados empresariais"
             />
           </div>
         </div>

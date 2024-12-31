@@ -2,17 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Profile } from "./types";
+import { Profile, FormValues } from "./types";
+import { UserFormFields } from "./form/UserFormFields";
+import { UserRoleSelect } from "./form/UserRoleSelect";
+import { UserStatusSelect } from "./form/UserStatusSelect";
 
 interface UserFormModalProps {
   open: boolean;
@@ -21,20 +16,10 @@ interface UserFormModalProps {
   onSuccess?: () => void;
 }
 
-interface FormValues {
-  email: string;
-  password?: string;
-  confirmPassword?: string;
-  full_name?: string;
-  username?: string;
-  role?: string;
-  status?: string;
-}
-
 export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormModalProps) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<FormValues>({
+  const form = useForm<FormValues>({
     defaultValues: {
       full_name: user?.full_name || '',
       username: user?.username || '',
@@ -45,8 +30,6 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
       confirmPassword: ''
     }
   });
-
-  const password = watch("password");
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -59,8 +42,8 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
           .update({
             full_name: values.full_name,
             username: values.username,
-            role: values.role || 'user',
-            status: values.status || 'active'
+            role: values.role,
+            status: values.status
           })
           .eq("id", user.id);
 
@@ -68,23 +51,23 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
       } else {
         // Create new user with auth
         const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: values.email,
+          email: values.email!,
           password: values.password!,
           options: {
             data: {
               full_name: values.full_name,
               username: values.username,
+              role: values.role,
+              status: values.status
             }
           }
         });
 
         if (authError) throw authError;
-
-        // The profile will be created automatically through the database trigger
       }
 
       toast({
-        title: `User ${user ? "updated" : "created"} successfully`,
+        title: `Usuário ${user ? "atualizado" : "criado"} com sucesso`,
         variant: "default",
       });
       
@@ -92,12 +75,12 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
         onSuccess();
       }
       onOpenChange(false);
-      reset();
+      form.reset();
     } catch (error: any) {
       console.error("Error:", error);
       toast({
-        title: "Error",
-        description: error.message || "Something went wrong. Please try again.",
+        title: "Erro",
+        description: error.message || "Algo deu errado. Por favor, tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -107,140 +90,30 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{user ? "Edit User" : "Create User"}</DialogTitle>
+          <DialogTitle>{user ? "Editar Usuário" : "Criar Usuário"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {!user && (
-            <>
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
-                  Email *
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...register("email", { 
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address"
-                    }
-                  })}
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium">
-                  Password *
-                </label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password", { 
-                    required: "Password is required",
-                    minLength: {
-                      value: 6,
-                      message: "Password must be at least 6 characters"
-                    }
-                  })}
-                />
-                {errors.password && (
-                  <p className="text-sm text-red-500">{errors.password.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="text-sm font-medium">
-                  Confirm Password *
-                </label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  {...register("confirmPassword", {
-                    required: "Please confirm your password",
-                    validate: value =>
-                      value === password || "The passwords do not match"
-                  })}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
-                )}
-              </div>
-            </>
-          )}
-          
-          <div className="space-y-2">
-            <label htmlFor="full_name" className="text-sm font-medium">
-              Full Name
-            </label>
-            <Input
-              id="full_name"
-              {...register("full_name")}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="username" className="text-sm font-medium">
-              Username
-            </label>
-            <Input
-              id="username"
-              {...register("username")}
-            />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <UserFormFields form={form} user={user} />
+            <div className="space-y-4 md:col-span-2">
+              <UserRoleSelect form={form} defaultValue={user?.role || 'user'} />
+              <UserStatusSelect form={form} defaultValue={user?.status || 'active'} />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="role" className="text-sm font-medium">
-              Role
-            </label>
-            <Select
-              value={user?.role || 'user'}
-              onValueChange={(value) => setValue("role", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="user">User</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="status" className="text-sm font-medium">
-              Status
-            </label>
-            <Select
-              value={user?.status || 'active'}
-              onValueChange={(value) => setValue("status", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end space-x-2 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
-              Cancel
+              Cancelar
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Loading..." : user ? "Update" : "Create"}
+              {loading ? "Carregando..." : user ? "Atualizar" : "Criar"}
             </Button>
           </div>
         </form>

@@ -89,6 +89,20 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
           return;
         }
 
+        // Update the profile with additional data
+        if (authData.user) {
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .update({
+              username: values.username,
+              role: values.role,
+              status: values.status
+            })
+            .eq("id", authData.user.id);
+
+          if (profileError) throw profileError;
+        }
+
         toast({
           title: "Usuário criado",
           description: "Um novo usuário foi criado com sucesso.",
@@ -99,6 +113,8 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
       if (onSuccess) {
         onSuccess();
       }
+      
+      onOpenChange(false);
     } catch (error: any) {
       console.error("Error:", error);
       toast({

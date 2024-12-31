@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Building2, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
@@ -7,7 +7,7 @@ import { CompanyTypeCard } from "@/components/dashboard/CompanyTypeCard";
 import { TopNav } from "@/components/dashboard/TopNav";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import Users from "./Users";
+import UsersSection from "@/components/dashboard/UsersSection";
 
 const companyTypes = [
   { type: "Holding", count: 8 },
@@ -36,7 +36,7 @@ const item = {
 
 const Index = () => {
   const navigate = useNavigate();
-  const isUsersRoute = window.location.pathname === "/users";
+  const [activeSection, setActiveSection] = useState("dashboard");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -59,11 +59,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <TopNav />
+      <TopNav onSectionChange={setActiveSection} />
       
       <main className="container mx-auto px-4 py-8">
-        {isUsersRoute ? (
-          <Users />
+        {activeSection === "users" ? (
+          <UsersSection />
         ) : (
           <>
             <div className="flex items-center justify-between mb-8">

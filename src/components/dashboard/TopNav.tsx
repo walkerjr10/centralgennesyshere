@@ -1,91 +1,49 @@
-import { motion } from "framer-motion";
-import { User, LogOut } from "lucide-react";
-import { Button } from "../ui/button";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
 
-const menuItems = [
-  { label: "Dashboard", href: "/" },
-  { label: "Empresas", href: "/empresas" },
-  { label: "Cursos", href: "/cursos" },
-  { label: "Amistosos", href: "/amistosos" },
-  { label: "Settings", href: "/settings" },
-  { label: "Usuários", href: "/users" },  // Updated to match the correct route
-];
+interface TopNavProps {
+  onSectionChange: (section: string) => void;
+}
 
-export function TopNav() {
-  const navigate = useNavigate();
-  const { toast } = useToast();
+export function TopNav({ onSectionChange }: TopNavProps) {
+  const [activeSection, setActiveSection] = useState("dashboard");
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
-      navigate("/login");
-    }
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
+    onSectionChange(section);
   };
 
-  const handleMenuClick = (href: string) => (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (href === "/" || href === "/users") {  // Added /users as an implemented route
-      navigate(href);
-    } else {
-      toast({
-        description: "Esta funcionalidade será implementada em breve.",
-        duration: 2000,
-      });
-    }
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
   };
 
   return (
-    <motion.div
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50"
-    >
-      <div className="flex items-center gap-x-4">
-        <span className="font-semibold text-2xl text-[#4263EB]">Gennesys</span>
+    <div className="border-b">
+      <div className="flex h-16 items-center px-4 container mx-auto">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant={activeSection === "dashboard" ? "default" : "ghost"}
+            onClick={() => handleSectionChange("dashboard")}
+          >
+            Dashboard
+          </Button>
+          <Button
+            variant={activeSection === "users" ? "default" : "ghost"}
+            onClick={() => handleSectionChange("users")}
+          >
+            Usuários
+          </Button>
+        </div>
+        <div className="ml-auto flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            onClick={handleSignOut}
+          >
+            Sair
+          </Button>
+        </div>
       </div>
-      
-      <div className="flex items-center gap-x-6">
-        <nav className="hidden md:flex items-center gap-x-6">
-          {menuItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              onClick={handleMenuClick(item.href)}
-              className="text-sm text-gray-600 hover:text-[#4263EB] transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-gray-100">
-                  <User className="h-4 w-4 text-gray-600" />
-                </AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Sair</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </motion.div>
+    </div>
   );
 }

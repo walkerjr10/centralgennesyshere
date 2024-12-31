@@ -22,6 +22,9 @@ interface UserFormModalProps {
 }
 
 interface FormValues {
+  email: string;
+  password?: string;
+  confirmPassword?: string;
   full_name?: string;
   username?: string;
   role?: string;
@@ -31,14 +34,19 @@ interface FormValues {
 export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormModalProps) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm<FormValues>({
+  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<FormValues>({
     defaultValues: {
       full_name: user?.full_name || '',
       username: user?.username || '',
       role: user?.role || 'user',
-      status: user?.status || 'active'
+      status: user?.status || 'active',
+      email: '',
+      password: '',
+      confirmPassword: ''
     }
   });
+
+  const password = watch("password");
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -48,21 +56,31 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
         // Update existing user
         const { error } = await supabase
           .from("profiles")
-          .update(values)
+          .update({
+            full_name: values.full_name,
+            username: values.username,
+            role: values.role || 'user',
+            status: values.status || 'active'
+          })
           .eq("id", user.id);
 
         if (error) throw error;
       } else {
-        // Create new user
-        const { error } = await supabase
-          .from("profiles")
-          .insert({
-            ...values,
-            role: values.role || 'user',
-            status: values.status || 'active'
-          });
+        // Create new user with auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: values.email,
+          password: values.password!,
+          options: {
+            data: {
+              full_name: values.full_name,
+              username: values.username,
+            }
+          }
+        });
 
-        if (error) throw error;
+        if (authError) throw authError;
+
+        // The profile will be created automatically through the database trigger
       }
 
       toast({
@@ -75,11 +93,11 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
       }
       onOpenChange(false);
       reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -94,6 +112,68 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
           <DialogTitle>{user ? "Edit User" : "Create User"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {!user && (
+            <>
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium">
+                  Email *
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  {...register("email", { 
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address"
+                    }
+                  })}
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium">
+                  Password *
+                </label>
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password", { 
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters"
+                    }
+                  })}
+                />
+                {errors.password && (
+                  <p className="text-sm text-red-500">{errors.password.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="confirmPassword" className="text-sm font-medium">
+                  Confirm Password *
+                </label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  {...register("confirmPassword", {
+                    required: "Please confirm your password",
+                    validate: value =>
+                      value === password || "The passwords do not match"
+                  })}
+                />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+                )}
+              </div>
+            </>
+          )}
+          
           <div className="space-y-2">
             <label htmlFor="full_name" className="text-sm font-medium">
               Full Name

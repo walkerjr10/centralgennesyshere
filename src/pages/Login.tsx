@@ -36,12 +36,12 @@ const Login = () => {
         style={{
           background: `linear-gradient(
             to right,
-            rgba(66, 99, 235, 0.9),
-            rgba(66, 99, 235, 0.85)
+            rgba(66, 99, 235, 0.75),
+            rgba(66, 99, 235, 0.65)
           ), url('/lovable-uploads/9ac1479b-a9c7-4e54-ad45-6ef16f320548.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundBlendMode: 'multiply'
+          backgroundBlendMode: 'soft-light'
         }}
       >
         <div>

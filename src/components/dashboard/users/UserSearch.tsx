@@ -6,10 +6,10 @@ import { Search } from "lucide-react";
 import { UserSearchProps } from "../types";
 
 const statusOptions = [
-  { key: "all", label: "Todos", color: "bg-blue-500" },
-  { key: "active", label: "Ativos", color: "bg-green-500" },
-  { key: "inactive", label: "Inativos", color: "bg-gray-500" },
-  { key: "suspended", label: "Suspensos", color: "bg-red-500" }
+  { key: "all", label: "TODOS", color: "bg-[#4263EB]" },
+  { key: "active", label: "ATIVOS", color: "bg-green-500" },
+  { key: "inactive", label: "INATIVOS", color: "bg-gray-500" },
+  { key: "suspended", label: "SUSPENSOS", color: "bg-red-500" }
 ];
 
 export const UserSearch = ({ 
@@ -37,7 +37,7 @@ export const UserSearch = ({
           <Input
             type="search"
             placeholder="Buscar por nome, username ou função..."
-            className="pl-10 pr-4 w-[300px] transition-all duration-200 border-gray-200 focus:border-[#4263EB]"
+            className="pl-10 pr-4 w-[300px] transition-all duration-200 border-gray-200 focus:border-[#4263EB] focus:ring-[#4263EB]"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -67,27 +67,11 @@ export const UserSearch = ({
                 relative overflow-hidden transition-all duration-200
                 ${statusFilter === status.key 
                   ? `bg-[#4263EB] text-white hover:bg-[#3451c7]` 
-                  : 'hover:bg-gray-50'
+                  : 'text-gray-600 hover:bg-[#4263EB]/5 hover:text-[#4263EB] hover:border-[#4263EB]'
                 }
               `}
             >
-              <Badge
-                variant="outline"
-                className={`
-                  mr-2 border-0 text-xs uppercase tracking-wider font-medium
-                  ${status.key === "active"
-                    ? "bg-green-500/10 text-green-700"
-                    : status.key === "inactive"
-                    ? "bg-gray-500/10 text-gray-700"
-                    : status.key === "suspended"
-                    ? "bg-red-500/10 text-red-700"
-                    : "bg-[#4263EB]/10 text-[#4263EB]"
-                  }
-                `}
-              >
-                {status.key}
-              </Badge>
-              <span className="text-sm">{status.label}</span>
+              <span className="text-sm font-medium">{status.label}</span>
             </Button>
           </motion.div>
         ))}

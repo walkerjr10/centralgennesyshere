@@ -1,27 +1,12 @@
-import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { Badge } from "@/components/ui/badge";
 import { Pencil, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { UsersTableProps } from "../types";
-import { motion, AnimatePresence } from "framer-motion";
+import { formatDate } from "@/lib/utils";
 
-export const UsersTable = ({ 
-  profiles, 
-  isLoading, 
-  filteredProfiles, 
-  onEditUser, 
-  onDeleteUser 
-}: UsersTableProps) => {
+export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser, onDeleteUser }: UsersTableProps) => {
   const getStatusColor = (status: string | null) => {
     switch (status?.toLowerCase()) {
       case "active":
@@ -46,109 +31,85 @@ export const UsersTable = ({
     }
   };
 
-  const formatDate = (date: string | null) => {
-    if (!date) return "-";
-    return format(new Date(date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
-  };
-
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <Skeleton className="h-12 w-full" />
-          </motion.div>
-        ))}
+      <div className="w-full h-64 flex items-center justify-center">
+        <div className="animate-pulse text-[#4263EB]">Carregando...</div>
       </div>
     );
   }
 
+  if (!profiles?.length) {
+    return (
+      <div className="w-full h-64 flex items-center justify-center">
+        <p className="text-gray-500">Nenhum usuário encontrado.</p>
+      </div>
+    );
+  }
+
+  const displayProfiles = filteredProfiles || profiles;
+
   return (
-    <div className="rounded-md border bg-white shadow-sm">
+    <div className="rounded-md border">
       <Table>
         <TableHeader>
-          <TableRow className="bg-gray-50">
-            <TableHead className="font-semibold text-[#4263EB]">Nome</TableHead>
-            <TableHead className="font-semibold text-[#4263EB]">Username</TableHead>
-            <TableHead className="font-semibold text-[#4263EB]">Função</TableHead>
-            <TableHead className="font-semibold text-[#4263EB]">Status</TableHead>
-            <TableHead className="font-semibold text-[#4263EB]">Último acesso</TableHead>
-            <TableHead className="text-right font-semibold text-[#4263EB]">Ações</TableHead>
+          <TableRow className="bg-[#4263EB]/5">
+            <TableHead className="font-medium text-[#4263EB]">Nome</TableHead>
+            <TableHead className="font-medium text-[#4263EB]">Username</TableHead>
+            <TableHead className="font-medium text-[#4263EB]">Função</TableHead>
+            <TableHead className="font-medium text-[#4263EB]">Status</TableHead>
+            <TableHead className="font-medium text-[#4263EB]">Último acesso</TableHead>
+            <TableHead className="text-right font-medium text-[#4263EB]">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <AnimatePresence>
-            {filteredProfiles?.map((profile) => (
-              <motion.tr
-                key={profile.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="hover:bg-gray-50 transition-colors"
-              >
-                <TableCell className="font-medium">
-                  {profile.full_name || "-"}
-                </TableCell>
-                <TableCell>{profile.username || "-"}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant="secondary"
-                    className={`${getRoleBadgeColor(profile.role)} uppercase text-xs tracking-wider transition-colors`}
-                  >
-                    {profile.role || "user"}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant="secondary"
-                    className={`${getStatusColor(profile.status)} uppercase text-xs tracking-wider transition-colors`}
-                  >
-                    {profile.status || "active"}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {profile.last_sign_in
-                    ? formatDate(profile.last_sign_in)
-                    : "-"}
-                </TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onEditUser(profile)}
-                    className="hover:bg-[#4263EB]/10 hover:text-[#4263EB] transition-colors"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onDeleteUser(profile)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </motion.tr>
-            ))}
-          </AnimatePresence>
-          {filteredProfiles?.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={6} className="h-32 text-center text-gray-500">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+          {displayProfiles.map((profile) => (
+            <motion.tr
+              key={profile.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="hover:bg-[#4263EB]/5 transition-colors"
+            >
+              <TableCell className="font-medium">{profile.full_name || '-'}</TableCell>
+              <TableCell>{profile.username || '-'}</TableCell>
+              <TableCell>
+                <Badge
+                  variant="secondary"
+                  className={`${getRoleBadgeColor(profile.role)} uppercase text-xs tracking-wider font-medium transition-colors`}
                 >
-                  Nenhum usuário encontrado
-                </motion.div>
+                  {profile.role?.toUpperCase() || "USER"}
+                </Badge>
               </TableCell>
-            </TableRow>
-          )}
+              <TableCell>
+                <Badge
+                  variant="secondary"
+                  className={`${getStatusColor(profile.status)} uppercase text-xs tracking-wider font-medium transition-colors`}
+                >
+                  {profile.status?.toUpperCase() || "ACTIVE"}
+                </Badge>
+              </TableCell>
+              <TableCell>{profile.last_sign_in ? formatDate(profile.last_sign_in) : '-'}</TableCell>
+              <TableCell className="text-right space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onEditUser(profile)}
+                  className="hover:bg-[#4263EB]/10 hover:text-[#4263EB] transition-colors"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDeleteUser(profile)}
+                  className="hover:bg-red-500/10 hover:text-red-500 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </TableCell>
+            </motion.tr>
+          ))}
         </TableBody>
       </Table>
     </div>

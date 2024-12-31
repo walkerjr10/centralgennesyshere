@@ -53,21 +53,18 @@ export function UserFormModal({ isOpen, onOpenChange, onSubmit, userToEdit }: Us
           description: "As informações do usuário foram atualizadas com sucesso.",
         });
       } else {
-        // Create new user
-        const { error: createError } = await supabase.auth.admin.createUser({
-          email: data.email!,
-          password: data.password!,
-          email_confirm: true,
-          user_metadata: {
+        // Create new user using Edge Function
+        const { error } = await supabase.functions.invoke('create-user', {
+          body: {
+            email: data.email,
+            password: data.password,
             full_name: data.full_name,
             username: data.username,
-          },
-          app_metadata: {
             role: data.role,
           },
         });
 
-        if (createError) throw createError;
+        if (error) throw error;
 
         toast({
           title: "Usuário criado",

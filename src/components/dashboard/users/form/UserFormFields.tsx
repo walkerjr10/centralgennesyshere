@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues, Profile } from "../types";
 import { Form } from "@/components/ui/form";
+import { UserRoleSelect } from "./UserRoleSelect";
 
 interface UserFormFieldsProps {
   form: UseFormReturn<FormValues>;
@@ -104,6 +105,11 @@ export function UserFormFields({ form, user, isSubmitting, onSubmit }: UserFormF
             className="w-full"
           />
         </div>
+
+        <UserRoleSelect 
+          form={form} 
+          defaultValue={user?.role || 'user'}
+        />
 
         <div className="flex justify-end space-x-2">
           <Button

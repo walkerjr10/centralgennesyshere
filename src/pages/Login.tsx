@@ -30,8 +30,8 @@ const Login = () => {
   }, [navigate]);
 
   return (
-    <div className="flex min-h-screen">
-      <div className="hidden lg:flex lg:w-1/2 bg-[#4263EB] text-white flex-col justify-between min-h-screen p-8">
+    <div className="flex min-h-screen w-full">
+      <div className="fixed left-0 top-0 bottom-0 w-1/2 bg-[#4263EB] text-white flex flex-col justify-between p-8">
         <div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -81,8 +81,10 @@ const Login = () => {
         </motion.div>
       </div>
 
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <LoginForm />
+      <div className="w-full flex items-center justify-center ml-[50%]">
+        <div className="w-full max-w-md px-8">
+          <LoginForm />
+        </div>
       </div>
     </div>
   );

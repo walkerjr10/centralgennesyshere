@@ -31,13 +31,13 @@ export const UserSearch = ({
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="relative max-w-xs"
+          className="relative max-w-xl"
         >
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
           <Input
             type="search"
             placeholder="Buscar por nome, username ou função..."
-            className="pl-10 pr-4 w-[300px] transition-all duration-200 border-gray-200 focus:border-[#4263EB] focus:ring-[#4263EB]"
+            className="pl-10 pr-4 w-[400px] transition-all duration-200 border-gray-200 focus:border-[#4263EB] focus:ring-[#4263EB]"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />

@@ -31,7 +31,10 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen w-full">
-      <div 
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
         className="fixed left-0 top-0 bottom-0 w-1/2 text-white flex flex-col justify-between p-8"
         style={{
           background: `linear-gradient(
@@ -96,7 +99,7 @@ const Login = () => {
           <CopyrightIcon className="w-4 h-4 mr-2" />
           <span>Todos os direitos reservados à Gennesys 2025</span>
         </motion.div>
-      </div>
+      </motion.div>
 
       <div className="w-full flex items-center justify-center ml-[50%]">
         <div className="w-full max-w-md px-8">

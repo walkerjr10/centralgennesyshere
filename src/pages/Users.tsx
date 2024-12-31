@@ -77,9 +77,9 @@ export default function Users() {
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-primary">Users</h1>
+        <h1 className="text-3xl font-bold text-[#4263EB]">Usuários</h1>
         <Button className="gap-2">
           <UserPlus className="h-4 w-4" />
           Add User
@@ -98,7 +98,7 @@ export default function Users() {
         </div>
       </div>
 
-      <div className="border rounded-lg">
+      <div className="border rounded-lg bg-white">
         <Table>
           <TableHeader>
             <TableRow>
@@ -172,6 +172,6 @@ export default function Users() {
           </TableBody>
         </Table>
       </div>
-    </div>
+    </>
   );
 }

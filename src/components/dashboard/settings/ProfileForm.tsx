@@ -17,6 +17,7 @@ interface ProfileFormProps {
 
 export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
   const [loading, setLoading] = useState(false);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const [formProfile, setFormProfile] = useState<Profile>({
     username: profile?.username || "",
     full_name: profile?.full_name || "",
@@ -24,9 +25,43 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
   });
   const { toast } = useToast();
 
+  async function checkUsernameAvailability(username: string) {
+    if (!username || username === profile?.username) {
+      setUsernameError(null);
+      return true;
+    }
+
+    const { data: existingUser, error } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("username", username)
+      .single();
+
+    if (error && error.code === "PGRST116") {
+      // No user found with this username
+      setUsernameError(null);
+      return true;
+    }
+
+    if (existingUser) {
+      setUsernameError("Este nome de usuário já está em uso");
+      return false;
+    }
+
+    setUsernameError(null);
+    return true;
+  }
+
   async function updateProfile() {
     try {
       setLoading(true);
+      
+      // Check username availability before updating
+      const isUsernameAvailable = await checkUsernameAvailability(formProfile.username as string);
+      if (!isUsernameAvailable) {
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) throw new Error("Usuário não encontrado");
@@ -35,13 +70,14 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
         id: user.id,
         username: formProfile.username,
         full_name: formProfile.full_name,
+        avatar_url: profile?.avatar_url, // Preserve the avatar_url
         updated_at: new Date().toISOString(),
       };
 
       const { error } = await supabase.from("profiles").upsert(updates);
       if (error) throw error;
 
-      onProfileUpdate({ ...formProfile });
+      onProfileUpdate({ ...formProfile, avatar_url: profile?.avatar_url });
       toast({
         title: "Perfil atualizado",
         description: "Suas informações foram atualizadas com sucesso.",
@@ -79,13 +115,20 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
           id="username"
           type="text"
           value={formProfile.username || ""}
-          onChange={(e) => setFormProfile({ ...formProfile, username: e.target.value })}
+          onChange={(e) => {
+            setFormProfile({ ...formProfile, username: e.target.value });
+            checkUsernameAvailability(e.target.value);
+          }}
+          className={usernameError ? "border-red-500" : ""}
         />
+        {usernameError && (
+          <p className="text-sm text-red-500">{usernameError}</p>
+        )}
       </div>
 
       <Button
         onClick={updateProfile}
-        disabled={loading}
+        disabled={loading || !!usernameError}
         className="w-full"
       >
         {loading ? "Atualizando..." : "Atualizar Perfil"}

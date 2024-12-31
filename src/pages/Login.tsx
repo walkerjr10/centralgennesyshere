@@ -31,7 +31,7 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen">
-      <div className="hidden lg:flex lg:w-1/2 bg-[#4263EB] text-white p-12 flex-col justify-between">
+      <div className="hidden lg:flex lg:w-1/2 bg-[#4263EB] text-white flex-col justify-between h-screen p-8">
         <div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

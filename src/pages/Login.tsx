@@ -31,7 +31,19 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen w-full">
-      <div className="fixed left-0 top-0 bottom-0 w-1/2 bg-[#4263EB] text-white flex flex-col justify-between p-8">
+      <div 
+        className="fixed left-0 top-0 bottom-0 w-1/2 text-white flex flex-col justify-between p-8"
+        style={{
+          background: `linear-gradient(
+            to right,
+            rgba(66, 99, 235, 0.9),
+            rgba(66, 99, 235, 0.85)
+          ), url('/lovable-uploads/9ac1479b-a9c7-4e54-ad45-6ef16f320548.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundBlendMode: 'multiply'
+        }}
+      >
         <div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

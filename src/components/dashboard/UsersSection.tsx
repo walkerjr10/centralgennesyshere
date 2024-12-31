@@ -91,14 +91,24 @@ const UsersSection = () => {
 
       if (error) throw error;
 
+      // Refresh both queries
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["profiles"] }),
+        queryClient.invalidateQueries({ queryKey: ["profiles-count"] })
+      ]);
+
       toast({
         title: "Usuário excluído",
         description: "O usuário foi excluído com sucesso.",
       });
 
-      // Refresh the data
-      await queryClient.invalidateQueries({ queryKey: ["profiles"] });
-      await queryClient.invalidateQueries({ queryKey: ["profiles-count"] });
+      // Reset current page if we're on the last page and it's now empty
+      const remainingItems = (totalProfiles || 0) - 1;
+      const newTotalPages = Math.ceil(remainingItems / ITEMS_PER_PAGE);
+      if (currentPage > newTotalPages && currentPage > 1) {
+        setCurrentPage(newTotalPages);
+      }
+
     } catch (error: any) {
       toast({
         title: "Erro ao excluir usuário",

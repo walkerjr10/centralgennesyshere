@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 import { UserSearch } from "./users/UserSearch";
 import { UsersTable } from "./users/UsersTable";
 import { UsersPagination } from "./users/UsersPagination";
+import { UserFormModal } from "./users/UserFormModal";
 import { Profile } from "./users/types";
+import { Plus } from "lucide-react";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -12,6 +15,8 @@ const UsersSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<Profile | undefined>(undefined);
 
   const { data: { data: totalProfiles } = {}, isLoading: countLoading } = useQuery({
     queryKey: ["profiles-count"],
@@ -52,23 +57,50 @@ const UsersSection = () => {
 
   const totalPages = totalProfiles ? Math.ceil(totalProfiles / ITEMS_PER_PAGE) : 0;
 
+  const handleEditUser = (user: Profile) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedUser(undefined);
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold">Users</h2>
+        <Button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Add User
+        </Button>
+      </div>
+      
       <UserSearch
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
       />
+      
       <UsersTable
         profiles={profiles}
         isLoading={isLoading}
         filteredProfiles={filteredProfiles}
+        onEditUser={handleEditUser}
       />
+      
       <UsersPagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
+      />
+
+      <UserFormModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        user={selectedUser}
       />
     </div>
   );

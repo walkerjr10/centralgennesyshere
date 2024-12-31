@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -10,9 +11,10 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Pencil } from "lucide-react";
 import { UsersTableProps } from "./types";
 
-export const UsersTable = ({ profiles, isLoading, filteredProfiles }: UsersTableProps) => {
+export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser }: UsersTableProps) => {
   const getStatusColor = (status: string | null) => {
     switch (status?.toLowerCase()) {
       case "active":
@@ -64,6 +66,7 @@ export const UsersTable = ({ profiles, isLoading, filteredProfiles }: UsersTable
             <TableHead>Função</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Último acesso</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -94,11 +97,20 @@ export const UsersTable = ({ profiles, isLoading, filteredProfiles }: UsersTable
                   ? formatDate(profile.last_sign_in)
                   : "-"}
               </TableCell>
+              <TableCell className="text-right">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onEditUser(profile)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
           {filteredProfiles?.length === 0 && (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-8">
+              <TableCell colSpan={6} className="text-center py-8">
                 Nenhum usuário encontrado
               </TableCell>
             </TableRow>

@@ -18,6 +18,7 @@ export interface UsersTableProps {
   profiles: Profile[] | null;
   isLoading: boolean;
   filteredProfiles: Profile[] | null;
+  onEditUser: (user: Profile) => void;
 }
 
 export interface UsersPaginationProps {

@@ -129,8 +129,7 @@ export function UserManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold">Users</h2>
+      <div className="flex justify-end">
         <Button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Add User

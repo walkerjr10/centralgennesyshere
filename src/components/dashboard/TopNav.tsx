@@ -3,6 +3,13 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { Settings, LogOut, User } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface TopNavProps {
   onSectionChange: (section: string) => void;
@@ -67,14 +74,30 @@ export const TopNav = ({ onSectionChange, isAdmin }: TopNavProps) => {
           </div>
 
           <div className="flex items-center">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleSignOut}
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-[#4263EB] transition-colors duration-150 ease-in-out"
-            >
-              Sair
-            </motion.button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="p-2 text-gray-700 hover:text-[#4263EB] transition-colors duration-150 ease-in-out rounded-full hover:bg-gray-100"
+                >
+                  <User className="h-5 w-5" />
+                </motion.button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-white">
+                <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  <span>Configurações</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="cursor-pointer flex items-center gap-2 text-red-600 focus:text-red-600" 
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sair</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload } from "lucide-react";
+import { Upload, X, Check } from "lucide-react";
 
 interface AvatarUploadProps {
   url: string | null;
@@ -13,6 +13,8 @@ interface AvatarUploadProps {
 
 export function AvatarUpload({ url, onUploadComplete, size = "lg" }: AvatarUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   const sizes = {
@@ -21,16 +23,34 @@ export function AvatarUpload({ url, onUploadComplete, size = "lg" }: AvatarUploa
     lg: "h-20 w-20"
   };
 
-  async function uploadAvatar(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileSelect(event: React.ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files || event.target.files.length === 0) {
+      return;
+    }
+
+    const file = event.target.files[0];
+    setSelectedFile(file);
+
+    // Create preview URL
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+  }
+
+  function cancelUpload() {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl(null);
+    setSelectedFile(null);
+  }
+
+  async function confirmUpload() {
+    if (!selectedFile) return;
+
     try {
       setUploading(true);
 
-      if (!event.target.files || event.target.files.length === 0) {
-        throw new Error('Você precisa selecionar uma imagem para fazer upload.');
-      }
-
-      const file = event.target.files[0];
-      const fileExt = file.name.split('.').pop();
+      const fileExt = selectedFile.name.split('.').pop();
       const userId = (await supabase.auth.getUser()).data.user?.id;
       
       if (!userId) throw new Error('Usuário não encontrado');
@@ -52,7 +72,7 @@ export function AvatarUpload({ url, onUploadComplete, size = "lg" }: AvatarUploa
       // Upload the new avatar
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, selectedFile, { upsert: true });
 
       if (uploadError) {
         throw uploadError;
@@ -74,6 +94,13 @@ export function AvatarUpload({ url, onUploadComplete, size = "lg" }: AvatarUploa
         title: "Avatar atualizado",
         description: "Sua foto de perfil foi atualizada com sucesso.",
       });
+
+      // Clean up
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setPreviewUrl(null);
+      setSelectedFile(null);
     } catch (error) {
       toast({
         title: "Erro ao atualizar avatar",
@@ -88,27 +115,50 @@ export function AvatarUpload({ url, onUploadComplete, size = "lg" }: AvatarUploa
   return (
     <div className="flex flex-col items-center gap-4">
       <Avatar className={sizes[size]}>
-        <AvatarImage src={url || undefined} alt="Avatar" />
+        <AvatarImage src={previewUrl || url || undefined} alt="Avatar" />
         <AvatarFallback>
           {uploading ? "..." : "?"}
         </AvatarFallback>
       </Avatar>
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={uploading}
-        className="relative"
-      >
-        <input
-          type="file"
-          className="absolute inset-0 w-full opacity-0 cursor-pointer"
-          accept="image/*"
-          onChange={uploadAvatar}
+      
+      {!previewUrl ? (
+        <Button
+          variant="outline"
+          size="sm"
           disabled={uploading}
-        />
-        <Upload className="w-4 h-4 mr-2" />
-        {uploading ? "Enviando..." : "Alterar foto"}
-      </Button>
+          className="relative"
+        >
+          <input
+            type="file"
+            className="absolute inset-0 w-full opacity-0 cursor-pointer"
+            accept="image/*"
+            onChange={handleFileSelect}
+            disabled={uploading}
+          />
+          <Upload className="w-4 h-4 mr-2" />
+          {uploading ? "Enviando..." : "Alterar foto"}
+        </Button>
+      ) : (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={cancelUpload}
+            disabled={uploading}
+          >
+            <X className="w-4 h-4 mr-2" />
+            Cancelar
+          </Button>
+          <Button
+            size="sm"
+            onClick={confirmUpload}
+            disabled={uploading}
+          >
+            <Check className="w-4 h-4 mr-2" />
+            Confirmar
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

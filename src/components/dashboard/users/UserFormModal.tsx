@@ -6,26 +6,26 @@ import { motion } from "framer-motion";
 
 interface UserFormModalProps {
   isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: Partial<Profile>) => Promise<void>;
+  onOpenChange: (open: boolean) => void;
   userToEdit?: Profile | null;
+  onSubmit: (data: Partial<Profile>) => Promise<void>;
 }
 
-export function UserFormModal({ isOpen, onClose, onSubmit, userToEdit }: UserFormModalProps) {
+export function UserFormModal({ isOpen, onOpenChange, onSubmit, userToEdit }: UserFormModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (data: Partial<Profile>) => {
     setIsSubmitting(true);
     try {
       await onSubmit(data);
-      onClose();
+      onOpenChange(false);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl overflow-y-auto max-h-[90vh]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

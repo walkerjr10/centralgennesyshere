@@ -25,10 +25,9 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
   });
   const { toast } = useToast();
 
-  // Initialize form with profile data when it becomes available
   useEffect(() => {
     if (profile) {
-      console.log("Setting profile data:", profile); // Debug log
+      console.log("Setting profile data:", profile);
       setFormProfile({
         username: profile.username || "",
         full_name: profile.full_name || "",
@@ -47,12 +46,11 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
       .from("profiles")
       .select("username")
       .eq("username", username)
-      .single();
+      .maybeSingle();
 
-    if (error && error.code === "PGRST116") {
-      // No user found with this username
-      setUsernameError(null);
-      return true;
+    if (error) {
+      console.error("Error checking username:", error);
+      return false;
     }
 
     if (existingUser) {
@@ -114,7 +112,7 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
         <Input
           id="full_name"
           type="text"
-          value={formProfile.full_name}
+          value={formProfile.full_name || ""}
           onChange={(e) => setFormProfile({ ...formProfile, full_name: e.target.value })}
         />
       </div>
@@ -126,7 +124,7 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
         <Input
           id="username"
           type="text"
-          value={formProfile.username}
+          value={formProfile.username || ""}
           onChange={(e) => {
             setFormProfile({ ...formProfile, username: e.target.value });
             checkUsernameAvailability(e.target.value);

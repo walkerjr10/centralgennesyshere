@@ -158,10 +158,10 @@ export function UserManagement() {
       />
 
       <UserFormModal 
-        open={isModalOpen}
+        isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
-        user={selectedUser}
-        onSuccess={handleSuccess}
+        userToEdit={selectedUser}
+        onSubmit={handleSuccess}
       />
 
       <UserDeleteDialog

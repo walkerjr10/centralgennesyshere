@@ -85,7 +85,10 @@ export const TopNav = ({ onSectionChange, isAdmin }: TopNavProps) => {
                 </motion.button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-white">
-                <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+                <DropdownMenuItem 
+                  className="cursor-pointer flex items-center gap-2"
+                  onClick={() => navigate("/settings")}
+                >
                   <Settings className="h-4 w-4" />
                   <span>Configurações</span>
                 </DropdownMenuItem>

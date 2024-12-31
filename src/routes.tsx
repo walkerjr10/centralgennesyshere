@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
+import Index from "@/pages/Index";
+import Login from "@/pages/Login";
+import Settings from "@/pages/Settings";
 
 export const router = createBrowserRouter([
   {
@@ -10,5 +11,9 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
   },
 ]);

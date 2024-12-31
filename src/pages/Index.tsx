@@ -101,7 +101,7 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50">
       <TopNav onSectionChange={setActiveSection} isAdmin={isAdmin} />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="w-full px-4 py-8 lg:px-8">
         <Suspense fallback={
           <div className="flex items-center justify-center h-64">
             <div className="animate-pulse text-[#4263EB]">Loading section...</div>
@@ -181,6 +181,7 @@ const Index = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
+                className="w-full"
               >
                 <h2 className="text-2xl font-semibold mb-6 text-[#4263EB]">Tipos de Empresa</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

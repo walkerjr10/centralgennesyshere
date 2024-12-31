@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Settings, LogOut, User } from "lucide-react";
+import { Settings, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface TopNavProps {
   onSectionChange: (section: string) => void;
@@ -18,8 +19,32 @@ interface TopNavProps {
 
 export const TopNav = ({ onSectionChange, isAdmin }: TopNavProps) => {
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('avatar_url')
+            .eq('id', user.id)
+            .single();
+          
+          if (profile?.avatar_url) {
+            setAvatarUrl(profile.avatar_url);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
@@ -81,7 +106,12 @@ export const TopNav = ({ onSectionChange, isAdmin }: TopNavProps) => {
                   whileTap={{ scale: 0.98 }}
                   className="p-2 text-gray-700 hover:text-[#4263EB] transition-colors duration-150 ease-in-out rounded-full hover:bg-gray-100"
                 >
-                  <User className="h-5 w-5" />
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={avatarUrl || undefined} alt="Avatar do usuário" />
+                    <AvatarFallback className="bg-gray-100 text-gray-600">
+                      {!avatarUrl && "U"}
+                    </AvatarFallback>
+                  </Avatar>
                 </motion.button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-white">

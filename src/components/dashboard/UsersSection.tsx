@@ -8,6 +8,17 @@ import { UsersPagination } from "./users/UsersPagination";
 import { UserFormModal } from "./users/UserFormModal";
 import { Profile } from "./types";
 import { Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -17,7 +28,9 @@ const UsersSection = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Profile | undefined>(undefined);
+  const [userToDelete, setUserToDelete] = useState<Profile | null>(null);
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data: { data: totalProfiles } = {}, isLoading: countLoading } = useQuery({
     queryKey: ["profiles-count"],
@@ -63,13 +76,46 @@ const UsersSection = () => {
     setIsModalOpen(true);
   };
 
+  const handleDeleteUser = async (user: Profile) => {
+    setUserToDelete(user);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("id", userToDelete.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Usuário excluído",
+        description: "O usuário foi excluído com sucesso.",
+      });
+
+      // Refresh the data
+      await queryClient.invalidateQueries({ queryKey: ["profiles"] });
+      await queryClient.invalidateQueries({ queryKey: ["profiles-count"] });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao excluir usuário",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUserToDelete(null);
+    }
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedUser(undefined);
   };
 
   const handleSuccess = async () => {
-    // Invalidate and refetch queries
     await queryClient.invalidateQueries({ queryKey: ["profiles"] });
     await queryClient.invalidateQueries({ queryKey: ["profiles-count"] });
     setIsModalOpen(false);
@@ -98,6 +144,7 @@ const UsersSection = () => {
         isLoading={isLoading}
         filteredProfiles={filteredProfiles}
         onEditUser={handleEditUser}
+        onDeleteUser={handleDeleteUser}
       />
       
       <UsersPagination
@@ -112,6 +159,24 @@ const UsersSection = () => {
         user={selectedUser}
         onSuccess={handleSuccess}
       />
+
+      <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente o usuário{" "}
+              {userToDelete?.full_name || userToDelete?.username} e removerá seus dados.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

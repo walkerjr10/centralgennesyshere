@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Pencil } from "lucide-react";
-import { UsersTableProps } from "./types";
+import { Pencil, Trash2 } from "lucide-react";
+import { UsersTableProps } from "../types";
 
-export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser }: UsersTableProps) => {
+export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser, onDeleteUser }: UsersTableProps) => {
   const getStatusColor = (status: string | null) => {
     switch (status?.toLowerCase()) {
       case "active":
@@ -66,7 +66,7 @@ export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser }
             <TableHead>Função</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Último acesso</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -97,13 +97,21 @@ export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser }
                   ? formatDate(profile.last_sign_in)
                   : "-"}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right space-x-2">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onEditUser(profile)}
                 >
                   <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDeleteUser(profile)}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </TableCell>
             </TableRow>

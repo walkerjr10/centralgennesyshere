@@ -6,7 +6,6 @@ import { TopNav } from "@/components/dashboard/TopNav";
 import { DashboardHeader } from "@/components/dashboard/overview/DashboardHeader";
 import { StatsOverview } from "@/components/dashboard/overview/StatsOverview";
 import { CompanyTypesSection } from "@/components/dashboard/overview/CompanyTypesSection";
-import { toast } from "sonner";
 
 const UsersSection = lazy(() => import("@/components/dashboard/UsersSection"));
 
@@ -38,26 +37,14 @@ const Index = () => {
     enabled: !!session?.user?.id
   });
 
-  const handleForceLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast.error("Sessão expirada. Por favor, faça login novamente.");
-      navigate("/login");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      // Even if logout fails, redirect to login
-      navigate("/login");
-    }
-  };
-
   useEffect(() => {
     if (!sessionLoading && !session) {
-      handleForceLogout();
+      navigate("/login");
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' || !session) {
-        handleForceLogout();
+      if (!session) {
+        navigate("/login");
       }
     });
 

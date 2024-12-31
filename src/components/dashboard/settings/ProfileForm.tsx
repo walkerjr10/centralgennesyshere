@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -19,11 +19,22 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
   const [loading, setLoading] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [formProfile, setFormProfile] = useState<Profile>({
-    username: profile?.username || "",
-    full_name: profile?.full_name || "",
-    avatar_url: profile?.avatar_url || null,
+    username: "",
+    full_name: "",
+    avatar_url: null,
   });
   const { toast } = useToast();
+
+  // Initialize form with profile data when it becomes available
+  useEffect(() => {
+    if (profile) {
+      setFormProfile({
+        username: profile.username || "",
+        full_name: profile.full_name || "",
+        avatar_url: profile.avatar_url,
+      });
+    }
+  }, [profile]);
 
   async function checkUsernameAvailability(username: string) {
     if (!username || username === profile?.username) {
@@ -102,7 +113,7 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
         <Input
           id="full_name"
           type="text"
-          value={formProfile.full_name || ""}
+          value={formProfile.full_name}
           onChange={(e) => setFormProfile({ ...formProfile, full_name: e.target.value })}
         />
       </div>
@@ -114,7 +125,7 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
         <Input
           id="username"
           type="text"
-          value={formProfile.username || ""}
+          value={formProfile.username}
           onChange={(e) => {
             setFormProfile({ ...formProfile, username: e.target.value });
             checkUsernameAvailability(e.target.value);

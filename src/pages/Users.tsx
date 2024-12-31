@@ -80,7 +80,7 @@ export default function Users() {
     <>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-[#4263EB]">Usuários</h1>
-        <Button className="gap-2">
+        <Button className="gap-2 bg-[#4263EB] hover:bg-[#4263EB]/90">
           <UserPlus className="h-4 w-4" />
           Add User
         </Button>

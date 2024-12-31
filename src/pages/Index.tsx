@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Building2, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatsCard } from "@/components/dashboard/StatsCard";
@@ -36,7 +36,7 @@ const item = {
 
 const Index = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const isUsersRoute = window.location.pathname === "/users";
 
   useEffect(() => {
     const checkUser = async () => {
@@ -62,7 +62,7 @@ const Index = () => {
       <TopNav />
       
       <main className="container mx-auto px-4 py-8">
-        {location.pathname === "/users" ? (
+        {isUsersRoute ? (
           <Users />
         ) : (
           <>

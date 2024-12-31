@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { UserSearch } from "./users/UserSearch";
 import { UsersTable } from "./users/UsersTable";
 import { UsersPagination } from "./users/UsersPagination";
 import { UserFormModal } from "./users/UserFormModal";
-import { Profile } from "./users/types";
+import { Profile } from "./types";
 import { Plus } from "lucide-react";
 
 const ITEMS_PER_PAGE = 10;
@@ -17,6 +17,7 @@ const UsersSection = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Profile | undefined>(undefined);
+  const queryClient = useQueryClient();
 
   const { data: { data: totalProfiles } = {}, isLoading: countLoading } = useQuery({
     queryKey: ["profiles-count"],
@@ -67,6 +68,14 @@ const UsersSection = () => {
     setSelectedUser(undefined);
   };
 
+  const handleSuccess = async () => {
+    // Invalidate and refetch queries
+    await queryClient.invalidateQueries({ queryKey: ["profiles"] });
+    await queryClient.invalidateQueries({ queryKey: ["profiles-count"] });
+    setIsModalOpen(false);
+    setSelectedUser(undefined);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -101,10 +110,7 @@ const UsersSection = () => {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         user={selectedUser}
-        onSuccess={() => {
-          // Refresh the profiles query
-          window.location.reload();
-        }}
+        onSuccess={handleSuccess}
       />
     </div>
   );

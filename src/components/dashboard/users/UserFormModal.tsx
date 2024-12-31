@@ -99,8 +99,6 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
       if (onSuccess) {
         onSuccess();
       }
-      onOpenChange(false);
-      form.reset();
     } catch (error: any) {
       console.error("Error:", error);
       toast({

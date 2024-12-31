@@ -35,6 +35,35 @@ export const LoginForm = () => {
     }
   };
 
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: {
+            full_name: "",
+            avatar_url: "",
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success("Cadastro realizado com sucesso! Por favor, faça login.");
+      setEmail("");
+      setPassword("");
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao criar conta");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -106,12 +135,18 @@ export const LoginForm = () => {
           <LoginIcon />
         </Button>
 
-        <p className="text-center text-sm text-gray-600">
-          Não tem uma conta?{" "}
-          <a href="#" className="text-[#4263EB] hover:underline">
-            Criar conta
-          </a>
-        </p>
+        <div className="text-center">
+          <p className="text-sm text-gray-600">
+            Não tem uma conta?{" "}
+            <button
+              type="button"
+              onClick={handleSignUp}
+              className="text-[#4263EB] hover:underline"
+            >
+              Criar conta
+            </button>
+          </p>
+        </div>
       </form>
     </motion.div>
   );

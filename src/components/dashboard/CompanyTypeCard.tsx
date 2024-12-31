@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Card } from "../ui/card";
 
@@ -9,15 +10,15 @@ interface CompanyTypeCardProps {
 
 // Map company types to more contextually appropriate images
 const companyImages: { [key: string]: string } = {
-  "Holding": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80", // Modern corporate building
-  "Family Office": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80", // Elegant office interior
-  "Corporate": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80", // Corporate skyscraper
-  "Agro": "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80", // Agricultural field
-  "Industrial": "https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&q=80", // Industrial factory
-  "Retail": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80", // Modern retail store
+  "Holding": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800&h=400", // Added width and height
+  "Family Office": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=800&h=400",
+  "Corporate": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=800&h=400",
+  "Agro": "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=800&h=400",
+  "Industrial": "https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&q=80&w=800&h=400",
+  "Retail": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=800&h=400",
 };
 
-export function CompanyTypeCard({ type, count, index }: CompanyTypeCardProps) {
+export const CompanyTypeCard = memo(({ type, count, index }: CompanyTypeCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -34,6 +35,9 @@ export function CompanyTypeCard({ type, count, index }: CompanyTypeCardProps) {
             src={companyImages[type]}
             alt={type}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+            width={800}
+            height={400}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20" />
         </div>
@@ -59,4 +63,6 @@ export function CompanyTypeCard({ type, count, index }: CompanyTypeCardProps) {
       </Card>
     </motion.div>
   );
-}
+});
+
+CompanyTypeCard.displayName = 'CompanyTypeCard';

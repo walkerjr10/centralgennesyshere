@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { Card } from "../ui/card";
@@ -12,7 +13,7 @@ interface StatsCardProps {
   icon: LucideIcon;
 }
 
-export function StatsCard({ title, value, change, icon: Icon }: StatsCardProps) {
+export const StatsCard = memo(({ title, value, change, icon: Icon }: StatsCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -63,4 +64,6 @@ export function StatsCard({ title, value, change, icon: Icon }: StatsCardProps) 
       </Card>
     </motion.div>
   );
-}
+});
+
+StatsCard.displayName = 'StatsCard';

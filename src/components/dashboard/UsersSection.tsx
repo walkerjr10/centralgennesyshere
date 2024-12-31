@@ -10,6 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const UsersSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,6 +38,35 @@ const UsersSection = () => {
       profile.role?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const getStatusColor = (status: string | null) => {
+    switch (status?.toLowerCase()) {
+      case "active":
+        return "bg-green-500/10 text-green-700 hover:bg-green-500/20";
+      case "inactive":
+        return "bg-gray-500/10 text-gray-700 hover:bg-gray-500/20";
+      case "suspended":
+        return "bg-red-500/10 text-red-700 hover:bg-red-500/20";
+      default:
+        return "bg-gray-500/10 text-gray-700 hover:bg-gray-500/20";
+    }
+  };
+
+  const getRoleBadgeColor = (role: string | null) => {
+    switch (role?.toLowerCase()) {
+      case "admin":
+        return "bg-purple-500/10 text-purple-700 hover:bg-purple-500/20";
+      case "manager":
+        return "bg-blue-500/10 text-blue-700 hover:bg-blue-500/20";
+      default:
+        return "bg-gray-500/10 text-gray-700 hover:bg-gray-500/20";
+    }
+  };
+
+  const formatDate = (date: string | null) => {
+    if (!date) return "-";
+    return format(new Date(date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -48,7 +81,13 @@ const UsersSection = () => {
       </div>
 
       {isLoading ? (
-        <div>Carregando...</div>
+        <div className="space-y-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex space-x-4">
+              <Skeleton className="h-12 w-full" />
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="rounded-md border">
           <Table>
@@ -64,17 +103,40 @@ const UsersSection = () => {
             <TableBody>
               {filteredProfiles?.map((profile) => (
                 <TableRow key={profile.id}>
-                  <TableCell>{profile.full_name || "-"}</TableCell>
+                  <TableCell className="font-medium">
+                    {profile.full_name || "-"}
+                  </TableCell>
                   <TableCell>{profile.username || "-"}</TableCell>
-                  <TableCell>{profile.role || "user"}</TableCell>
-                  <TableCell>{profile.status || "active"}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="secondary"
+                      className={getRoleBadgeColor(profile.role)}
+                    >
+                      {profile.role || "user"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="secondary"
+                      className={getStatusColor(profile.status)}
+                    >
+                      {profile.status || "active"}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     {profile.last_sign_in
-                      ? new Date(profile.last_sign_in).toLocaleDateString("pt-BR")
+                      ? formatDate(profile.last_sign_in)
                       : "-"}
                   </TableCell>
                 </TableRow>
               ))}
+              {filteredProfiles?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8">
+                    Nenhum usuário encontrado
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>

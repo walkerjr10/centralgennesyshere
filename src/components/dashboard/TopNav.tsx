@@ -18,7 +18,7 @@ const menuItems = [
   { label: "Cursos", href: "/cursos" },
   { label: "Amistosos", href: "/amistosos" },
   { label: "Settings", href: "/settings" },
-  { label: "Usuários", href: "/usuarios" },
+  { label: "Usuários", href: "/users" },  // Updated to match the correct route
 ];
 
 export function TopNav() {
@@ -34,7 +34,7 @@ export function TopNav() {
 
   const handleMenuClick = (href: string) => (e: React.MouseEvent) => {
     e.preventDefault();
-    if (href === "/") {
+    if (href === "/" || href === "/users") {  // Added /users as an implemented route
       navigate(href);
     } else {
       toast({

@@ -38,7 +38,7 @@ export const UsersTable = ({
   const getRoleBadgeColor = (role: string | null) => {
     switch (role?.toLowerCase()) {
       case "admin":
-        return "bg-purple-500/10 text-purple-700 hover:bg-purple-500/20";
+        return "bg-[#4263EB]/10 text-[#4263EB] hover:bg-[#4263EB]/20";
       case "manager":
         return "bg-blue-500/10 text-blue-700 hover:bg-blue-500/20";
       default:
@@ -73,12 +73,12 @@ export const UsersTable = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50">
-            <TableHead className="font-semibold">Nome</TableHead>
-            <TableHead className="font-semibold">Username</TableHead>
-            <TableHead className="font-semibold">Função</TableHead>
-            <TableHead className="font-semibold">Status</TableHead>
-            <TableHead className="font-semibold">Último acesso</TableHead>
-            <TableHead className="text-right font-semibold">Ações</TableHead>
+            <TableHead className="font-semibold text-[#4263EB]">Nome</TableHead>
+            <TableHead className="font-semibold text-[#4263EB]">Username</TableHead>
+            <TableHead className="font-semibold text-[#4263EB]">Função</TableHead>
+            <TableHead className="font-semibold text-[#4263EB]">Status</TableHead>
+            <TableHead className="font-semibold text-[#4263EB]">Último acesso</TableHead>
+            <TableHead className="text-right font-semibold text-[#4263EB]">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -98,7 +98,7 @@ export const UsersTable = ({
                 <TableCell>
                   <Badge
                     variant="secondary"
-                    className={`${getRoleBadgeColor(profile.role)} transition-colors`}
+                    className={`${getRoleBadgeColor(profile.role)} uppercase text-xs tracking-wider transition-colors`}
                   >
                     {profile.role || "user"}
                   </Badge>
@@ -106,7 +106,7 @@ export const UsersTable = ({
                 <TableCell>
                   <Badge
                     variant="secondary"
-                    className={`${getStatusColor(profile.status)} transition-colors`}
+                    className={`${getStatusColor(profile.status)} uppercase text-xs tracking-wider transition-colors`}
                   >
                     {profile.status || "active"}
                   </Badge>
@@ -121,7 +121,7 @@ export const UsersTable = ({
                     variant="ghost"
                     size="sm"
                     onClick={() => onEditUser(profile)}
-                    className="hover:bg-gray-100 transition-colors"
+                    className="hover:bg-[#4263EB]/10 hover:text-[#4263EB] transition-colors"
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>

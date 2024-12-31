@@ -37,7 +37,7 @@ export const UserSearch = ({
           <Input
             type="search"
             placeholder="Buscar por nome, username ou função..."
-            className="pl-10 pr-4 w-[300px] transition-all duration-200 border-gray-200 focus:border-blue-500"
+            className="pl-10 pr-4 w-[300px] transition-all duration-200 border-gray-200 focus:border-[#4263EB]"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -74,20 +74,20 @@ export const UserSearch = ({
               <Badge
                 variant="outline"
                 className={`
-                  mr-2 border-0
+                  mr-2 border-0 text-xs uppercase tracking-wider font-medium
                   ${status.key === "active"
                     ? "bg-green-500/10 text-green-700"
                     : status.key === "inactive"
                     ? "bg-gray-500/10 text-gray-700"
                     : status.key === "suspended"
                     ? "bg-red-500/10 text-red-700"
-                    : "bg-blue-500/10 text-blue-700"
+                    : "bg-[#4263EB]/10 text-[#4263EB]"
                   }
                 `}
               >
                 {status.key}
               </Badge>
-              {status.label}
+              <span className="text-sm">{status.label}</span>
             </Button>
           </motion.div>
         ))}

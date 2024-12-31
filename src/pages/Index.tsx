@@ -7,14 +7,12 @@ import { DashboardHeader } from "@/components/dashboard/overview/DashboardHeader
 import { StatsOverview } from "@/components/dashboard/overview/StatsOverview";
 import { CompanyTypesSection } from "@/components/dashboard/overview/CompanyTypesSection";
 
-// Lazy load the UsersSection to improve initial load time
 const UsersSection = lazy(() => import("@/components/dashboard/UsersSection"));
 
 const Index = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("dashboard");
 
-  // Use React Query for session management
   const { data: session, isLoading: sessionLoading } = useQuery({
     queryKey: ['session'],
     queryFn: async () => {
@@ -24,7 +22,6 @@ const Index = () => {
     retry: false
   });
 
-  // Fetch user profile to get role
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile', session?.user?.id],
     queryFn: async () => {
@@ -54,7 +51,6 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, [navigate, session, sessionLoading]);
 
-  // Reset to dashboard if user is not admin and tries to access users section
   useEffect(() => {
     if (profile && profile.role !== 'admin' && activeSection === 'users') {
       setActiveSection('dashboard');
@@ -76,7 +72,7 @@ const Index = () => {
       <TopNav onSectionChange={setActiveSection} isAdmin={isAdmin} />
       
       <main className="w-full">
-        <div className="px-6 lg:px-12 py-8">
+        <div className="px-4 lg:px-8 py-8">
           <Suspense fallback={
             <div className="flex items-center justify-center h-64">
               <div className="animate-pulse text-[#4263EB]">Loading section...</div>
@@ -85,14 +81,14 @@ const Index = () => {
             {activeSection === "users" && isAdmin ? (
               <UsersSection />
             ) : (
-              <>
+              <div className="space-y-8">
                 <DashboardHeader 
                   title="Visão Geral" 
                   subtitle="Análise consolidada - dezembro" 
                 />
                 <StatsOverview />
                 <CompanyTypesSection />
-              </>
+              </div>
             )}
           </Suspense>
         </div>

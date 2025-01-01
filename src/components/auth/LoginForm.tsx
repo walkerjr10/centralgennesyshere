@@ -137,7 +137,7 @@ export const LoginForm = () => {
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Ainda não é nosso cliente? Entre em contato conosco.{" "}
+            Não tem uma conta?{" "}
             <button
               type="button"
               onClick={handleSignUp}

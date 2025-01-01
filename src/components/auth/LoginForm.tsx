@@ -137,14 +137,12 @@ export const LoginForm = () => {
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Não tem uma conta?{" "}
+            Ainda não é um cliente?{" "}
             <button
               type="button"
               onClick={handleSignUp}
               className="text-[#4263EB] hover:underline"
-            >
-              Criar conta
-            </button>
+            />
           </p>
         </div>
       </form>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UserMenu } from "./nav/UserMenu";
 import { NavItem } from "./nav/NavItem";
+import { LayoutDashboard, Users } from "lucide-react";
 
 interface TopNavProps {
   onSectionChange: (section: string) => void;
@@ -22,6 +23,7 @@ export const TopNav = ({ onSectionChange, isAdmin }: TopNavProps) => {
           <div className="flex">
             <NavItem
               label="Dashboard"
+              icon={LayoutDashboard}
               isActive={activeSection === "dashboard"}
               onClick={() => handleSectionChange("dashboard")}
             />
@@ -29,6 +31,7 @@ export const TopNav = ({ onSectionChange, isAdmin }: TopNavProps) => {
             {isAdmin && (
               <NavItem
                 label="Usuários"
+                icon={Users}
                 isActive={activeSection === "users"}
                 onClick={() => handleSectionChange("users")}
               />

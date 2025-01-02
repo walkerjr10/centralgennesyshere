@@ -30,6 +30,23 @@ export const CompaniesSection = () => {
     return acc;
   }, {}) || {};
 
+  // Define all possible company types
+  const allCompanyTypes = [
+    "Holding",
+    "Family Office",
+    "Corporate",
+    "Agro",
+    "Industrial",
+    "Têxtil",
+    "Incorporadora"
+  ];
+
+  // Ensure all company types are represented, even if count is 0
+  const completeCompanyTypes = allCompanyTypes.reduce((acc: Record<string, number>, type) => {
+    acc[type] = companyTypes[type] || 0;
+    return acc;
+  }, {});
+
   return (
     <div className="space-y-8">
       <DashboardHeader 
@@ -38,7 +55,7 @@ export const CompaniesSection = () => {
       />
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Object.entries(companyTypes).map(([type, count], index) => (
+        {Object.entries(completeCompanyTypes).map(([type, count], index) => (
           <CompanyTypeCard
             key={type}
             type={type}

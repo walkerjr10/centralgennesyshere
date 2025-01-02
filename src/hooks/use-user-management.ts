@@ -1,93 +1,119 @@
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Profile } from "@/components/dashboard/types";
+import { FormValues, Profile } from "@/components/dashboard/types";
 
 export const useUserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<Profile | undefined>(undefined);
-  const [userToDelete, setUserToDelete] = useState<Profile | null>(null);
-  const queryClient = useQueryClient();
+  const [page, setPage] = useState(1);
   const { toast } = useToast();
+  const ITEMS_PER_PAGE = 10;
 
-  const handleEditUser = (user: Profile) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
-  };
+  const { data: profiles, isLoading, error } = useQuery({
+    queryKey: ["profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-  const handleDeleteUser = async (user: Profile) => {
-    setUserToDelete(user);
-  };
+      if (error) throw error;
+      return data as Profile[];
+    }
+  });
 
-  const confirmDelete = async () => {
-    if (!userToDelete) return;
-
+  const handleCreateUser = async (values: FormValues) => {
     try {
-      const { error: deleteAuthError } = await supabase.functions.invoke('delete-user', {
-        body: { userId: userToDelete.id }
+      const { error } = await supabase.auth.admin.createUser({
+        email: values.email!,
+        password: values.password!,
+        email_confirm: true,
+        user_metadata: {
+          full_name: values.full_name
+        }
       });
 
-      if (deleteAuthError) throw deleteAuthError;
-
-      const { error: deleteProfileError } = await supabase
-        .from("profiles")
-        .delete()
-        .eq("id", userToDelete.id);
-
-      if (deleteProfileError) throw deleteProfileError;
-
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["profiles"] }),
-        queryClient.invalidateQueries({ queryKey: ["profiles-count"] })
-      ]);
+      if (error) throw error;
 
       toast({
-        title: "Usuário excluído",
-        description: "O usuário foi excluído com sucesso.",
+        title: "Success",
+        description: "User created successfully",
       });
-
     } catch (error: any) {
       toast({
-        title: "Erro ao excluir usuário",
+        title: "Error",
         description: error.message,
         variant: "destructive",
       });
-    } finally {
-      setUserToDelete(null);
     }
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedUser(undefined);
+  const handleUpdateUser = async (values: FormValues) => {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          full_name: values.full_name,
+          username: values.username,
+          role: values.role,
+          status: values.status,
+        })
+        .eq("id", values.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "User updated successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleSuccess = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["profiles"] });
-    await queryClient.invalidateQueries({ queryKey: ["profiles-count"] });
-    setIsModalOpen(false);
-    setSelectedUser(undefined);
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("id", userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "User deleted successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
+
+  const totalPages = profiles ? Math.ceil(profiles.length / ITEMS_PER_PAGE) : 0;
 
   return {
+    profiles,
+    loading: isLoading,
+    error,
+    page,
+    setPage,
     searchTerm,
     setSearchTerm,
     statusFilter,
     setStatusFilter,
-    currentPage,
-    setCurrentPage,
-    isModalOpen,
-    selectedUser,
-    userToDelete,
-    handleEditUser,
+    handleCreateUser,
+    handleUpdateUser,
     handleDeleteUser,
-    confirmDelete,
-    handleCloseModal,
-    handleSuccess,
-    setIsModalOpen,
+    totalPages,
   };
 };

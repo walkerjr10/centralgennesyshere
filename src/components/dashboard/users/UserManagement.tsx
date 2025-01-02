@@ -5,16 +5,19 @@ import { UserDeleteDialog } from "./UserDeleteDialog";
 import { UserSearch } from "./UserSearch";
 import { UsersTable } from "./UsersTable";
 import { UsersPagination } from "./UsersPagination";
+import { Profile } from "../types";
 
 export const UserManagement = () => {
   const {
-    users,
+    profiles: users,
     loading,
     error,
     page,
     setPage,
     searchTerm,
     setSearchTerm,
+    statusFilter,
+    setStatusFilter,
     handleCreateUser,
     handleUpdateUser,
     handleDeleteUser,
@@ -22,11 +25,11 @@ export const UserManagement = () => {
   } = useUserManagement();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [userToDelete, setUserToDelete] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
+  const [userToDelete, setUserToDelete] = useState<Profile | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleOpenModal = (user = null) => {
+  const handleOpenModal = (user: Profile | null = null) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
@@ -36,7 +39,7 @@ export const UserManagement = () => {
     setIsModalOpen(false);
   };
 
-  const handleOpenDeleteDialog = (user) => {
+  const handleOpenDeleteDialog = (user: Profile) => {
     setUserToDelete(user);
     setShowDeleteDialog(true);
   };
@@ -60,7 +63,12 @@ export const UserManagement = () => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
-        <UserSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <UserSearch 
+          searchTerm={searchTerm} 
+          onSearchChange={setSearchTerm}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
         <button
           onClick={() => handleOpenModal()}
           className="px-4 py-2 bg-[#4263EB] text-white rounded-md hover:bg-[#4263EB]/90"
@@ -70,10 +78,11 @@ export const UserManagement = () => {
       </div>
 
       <UsersTable
-        users={users}
-        loading={loading}
-        onEdit={handleOpenModal}
-        onDelete={handleOpenDeleteDialog}
+        profiles={users}
+        isLoading={loading}
+        filteredProfiles={users}
+        onEditUser={handleOpenModal}
+        onDeleteUser={handleOpenDeleteDialog}
       />
 
       <UsersPagination

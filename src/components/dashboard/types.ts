@@ -37,3 +37,17 @@ export interface UsersTableProps {
   onEditUser: (user: Profile) => void;
   onDeleteUser: (user: Profile) => void;
 }
+
+export interface UserFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  user: Profile | null;
+  onSubmit: (values: FormValues) => Promise<void>;
+}
+
+export interface UserDeleteDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => Promise<void>;
+  user: Profile | null;
+}

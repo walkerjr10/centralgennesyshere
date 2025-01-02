@@ -39,16 +39,15 @@ export const LoginForm = () => {
             </Button>
           </div>
           <PasswordInput
-            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
       </div>
-      <RememberMeCheckbox checked={rememberMe} onCheckedChange={setRememberMe} />
+      <RememberMeCheckbox checked={rememberMe} onChange={setRememberMe} />
       <LoginButton loading={loading} />
-      <SignupPrompt />
+      <SignupPrompt onSignUp={() => {}} />
     </form>
   );
 };

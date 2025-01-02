@@ -1,8 +1,4 @@
-interface SignupPromptProps {
-  onSignUp: () => void;
-}
-
-export const SignupPrompt = ({ onSignUp }: SignupPromptProps) => {
+export const SignupPrompt = () => {
   return (
     <div className="text-center">
       <p className="text-sm text-gray-600">

@@ -5,7 +5,8 @@ import { Pencil, Trash2, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { UsersTableProps } from "../types";
 import { formatDate } from "@/lib/utils";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 
 export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser, onDeleteUser }: UsersTableProps) => {
   const getStatusColor = (status: string | null) => {
@@ -75,6 +76,12 @@ export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser, 
               <TableCell className="font-medium">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-8 w-8">
+                    {profile.avatar_url ? (
+                      <AvatarImage 
+                        src={supabase.storage.from('avatars').getPublicUrl(profile.avatar_url).data.publicUrl} 
+                        alt={profile.full_name || 'Avatar'} 
+                      />
+                    ) : null}
                     <AvatarFallback className="bg-[#4263EB]/10">
                       <User className="h-4 w-4 text-[#4263EB]" />
                     </AvatarFallback>

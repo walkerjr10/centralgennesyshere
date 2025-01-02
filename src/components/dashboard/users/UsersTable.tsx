@@ -78,7 +78,7 @@ export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser, 
                   <Avatar className="h-8 w-8">
                     {profile.avatar_url ? (
                       <AvatarImage 
-                        src={supabase.storage.from('avatars').getPublicUrl(profile.avatar_url).data.publicUrl} 
+                        src={profile.avatar_url} 
                         alt={profile.full_name || 'Avatar'} 
                       />
                     ) : null}

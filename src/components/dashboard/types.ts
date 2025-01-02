@@ -16,6 +16,7 @@ export interface Profile {
   role: string | null;
   status: string | null;
   last_sign_in: string | null;
+  avatar_url: string | null;
 }
 
 export interface UserSearchProps {

@@ -1,116 +1,100 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { useUserManagement } from "@/hooks/use-user-management";
 import { UserFormModal } from "./UserFormModal";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { UserDeleteDialog } from "./UserDeleteDialog";
 import { UserSearch } from "./UserSearch";
 import { UsersTable } from "./UsersTable";
 import { UsersPagination } from "./UsersPagination";
-import { UserDeleteDialog } from "./UserDeleteDialog";
 
-const ITEMS_PER_PAGE = 10;
-
-export function UserManagement() {
+export const UserManagement = () => {
   const {
+    users,
+    loading,
+    error,
+    page,
+    setPage,
     searchTerm,
     setSearchTerm,
-    statusFilter,
-    setStatusFilter,
-    currentPage,
-    setCurrentPage,
-    isModalOpen,
-    selectedUser,
-    userToDelete,
-    handleEditUser,
+    handleCreateUser,
+    handleUpdateUser,
     handleDeleteUser,
-    confirmDelete,
-    handleCloseModal,
-    handleSuccess,
-    setIsModalOpen,
+    totalPages,
   } = useUserManagement();
 
-  const { data: { data: totalProfiles } = {}, isLoading: countLoading } = useQuery({
-    queryKey: ["profiles-count"],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from("profiles")
-        .select("*", { count: "exact", head: true });
-      return { data: count };
-    },
-  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data: profiles, isLoading } = useQuery({
-    queryKey: ["profiles", currentPage],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
+  const handleOpenModal = (user = null) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
 
-      if (error) throw error;
-      return data;
-    },
-  });
+  const handleCloseModal = () => {
+    setSelectedUser(null);
+    setIsModalOpen(false);
+  };
 
-  const filteredProfiles = profiles?.filter((profile) => {
-    const matchesSearch =
-      !searchTerm ||
-      profile.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profile.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profile.role?.toLowerCase().includes(searchTerm.toLowerCase());
+  const handleOpenDeleteDialog = (user) => {
+    setUserToDelete(user);
+    setShowDeleteDialog(true);
+  };
 
-    const matchesStatus =
-      statusFilter === "all" || profile.status?.toLowerCase() === statusFilter.toLowerCase();
+  const handleCloseDeleteDialog = () => {
+    setUserToDelete(null);
+    setShowDeleteDialog(false);
+  };
 
-    return matchesSearch && matchesStatus;
-  });
+  const handleConfirmDelete = async () => {
+    if (userToDelete) {
+      await handleDeleteUser(userToDelete.id);
+      handleCloseDeleteDialog();
+    }
+  };
 
-  const totalPages = totalProfiles ? Math.ceil(totalProfiles / ITEMS_PER_PAGE) : 0;
+  if (error) {
+    return <div>Error loading users: {error.message}</div>;
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Adicionar Usuário
-        </Button>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center mb-4">
+        <UserSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <button
+          onClick={() => handleOpenModal()}
+          className="px-4 py-2 bg-[#4263EB] text-white rounded-md hover:bg-[#4263EB]/90"
+        >
+          Add User
+        </button>
       </div>
-      
-      <UserSearch
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-      />
-      
+
       <UsersTable
-        profiles={profiles}
-        isLoading={isLoading}
-        filteredProfiles={filteredProfiles}
-        onEditUser={handleEditUser}
-        onDeleteUser={handleDeleteUser}
-      />
-      
-      <UsersPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
+        users={users}
+        loading={loading}
+        onEdit={handleOpenModal}
+        onDelete={handleOpenDeleteDialog}
       />
 
-      <UserFormModal 
+      <UsersPagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
+
+      <UserFormModal
         isOpen={isModalOpen}
-        onOpenChange={setIsModalOpen}
-        userToEdit={selectedUser}
-        onSubmit={handleSuccess}
+        onClose={handleCloseModal}
+        user={selectedUser}
+        onSubmit={selectedUser ? handleUpdateUser : handleCreateUser}
       />
 
       <UserDeleteDialog
-        userToDelete={userToDelete}
-        onOpenChange={() => setUserToDelete(null)}
-        onConfirmDelete={confirmDelete}
+        isOpen={showDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleConfirmDelete}
+        user={userToDelete}
       />
     </div>
   );
-}
+};

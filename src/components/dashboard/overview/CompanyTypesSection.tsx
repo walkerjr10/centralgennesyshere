@@ -7,7 +7,8 @@ const companyTypes = [
   { type: "Corporate", count: 12 },
   { type: "Agro", count: 6 },
   { type: "Industrial", count: 10 },
-  { type: "Retail", count: 7 },
+  { type: "Têxtil", count: 7 },
+  { type: "Incorporadora", count: 4 },
 ];
 
 export const CompanyTypesSection = () => {

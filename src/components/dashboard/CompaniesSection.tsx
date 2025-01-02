@@ -59,6 +59,7 @@ export const CompaniesSection = () => {
         <DashboardHeader 
           title="Empresas" 
           subtitle="Gerenciamento de empresas" 
+          showButton={false}
         />
         <ToggleGroup
           type="single"

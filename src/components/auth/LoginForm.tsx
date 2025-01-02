@@ -17,6 +17,11 @@ export const LoginForm = () => {
     handleSignUp,
   } = useAuth();
 
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleLogin();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -24,7 +29,7 @@ export const LoginForm = () => {
       transition={{ duration: 0.5 }}
       className="w-full max-w-md space-y-8"
     >
-      <form onSubmit={handleLogin} className="space-y-6">
+      <form onSubmit={onSubmit} className="space-y-6">
         <div className="space-y-2">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email

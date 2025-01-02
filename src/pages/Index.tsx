@@ -6,6 +6,7 @@ import { TopNav } from "@/components/dashboard/TopNav";
 import { DashboardHeader } from "@/components/dashboard/overview/DashboardHeader";
 import { StatsOverview } from "@/components/dashboard/overview/StatsOverview";
 import { CompanyTypesSection } from "@/components/dashboard/overview/CompanyTypesSection";
+import { CompaniesSection } from "@/components/dashboard/CompaniesSection";
 
 const UsersSection = lazy(() => import("@/components/dashboard/UsersSection"));
 
@@ -80,6 +81,8 @@ const Index = () => {
           }>
             {activeSection === "users" && isAdmin ? (
               <UsersSection />
+            ) : activeSection === "companies" ? (
+              <CompaniesSection />
             ) : (
               <div className="space-y-8">
                 <DashboardHeader 

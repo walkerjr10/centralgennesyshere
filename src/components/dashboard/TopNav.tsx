@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { UserMenu } from "./nav/UserMenu";
 import { NavItem } from "./nav/NavItem";
-import { LayoutDashboard, Users } from "lucide-react";
+import { Building2, LayoutDashboard, Users } from "lucide-react";
 
 interface TopNavProps {
   onSectionChange: (section: string) => void;
@@ -26,6 +26,13 @@ export const TopNav = ({ onSectionChange, isAdmin }: TopNavProps) => {
               icon={LayoutDashboard}
               isActive={activeSection === "dashboard"}
               onClick={() => handleSectionChange("dashboard")}
+            />
+
+            <NavItem
+              label="Empresas"
+              icon={Building2}
+              isActive={activeSection === "companies"}
+              onClick={() => handleSectionChange("companies")}
             />
 
             {isAdmin && (

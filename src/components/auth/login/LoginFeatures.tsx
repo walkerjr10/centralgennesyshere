@@ -1,5 +1,6 @@
 import { AuthFeature } from "@/components/auth/AuthFeature";
-import { DocumentIcon, TeamIcon, ChartIcon, ShieldCheckIcon } from "@/components/auth/AuthIcons";
+import { DocumentIcon, TeamIcon, ChartIcon } from "@/components/auth/AuthIcons";
+import { Shield } from "lucide-react";
 
 export const LoginFeatures = () => {
   return (
@@ -20,7 +21,7 @@ export const LoginFeatures = () => {
         description="Insights e relatórios detalhados"
       />
       <AuthFeature
-        icon={<ShieldCheckIcon className="w-6 h-6" />}
+        icon={<Shield className="w-6 h-6" />}
         title="Segurança Avançada"
         description="Proteção total dos seus dados empresariais"
       />

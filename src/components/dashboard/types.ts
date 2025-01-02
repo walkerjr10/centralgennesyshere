@@ -1,4 +1,5 @@
 export interface FormValues {
+  id?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -38,16 +39,8 @@ export interface UsersTableProps {
   onDeleteUser: (user: Profile) => void;
 }
 
-export interface UserFormModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  user: Profile | null;
-  onSubmit: (values: FormValues) => Promise<void>;
-}
-
 export interface UserDeleteDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => Promise<void>;
-  user: Profile | null;
+  userToDelete: Profile | null;
+  onOpenChange: (open: boolean) => void;
+  onConfirmDelete: () => Promise<void>;
 }

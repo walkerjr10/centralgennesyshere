@@ -5,7 +5,7 @@ import { UserDeleteDialog } from "./UserDeleteDialog";
 import { UserSearch } from "./UserSearch";
 import { UsersTable } from "./UsersTable";
 import { UsersPagination } from "./UsersPagination";
-import { Profile } from "../types";
+import { Profile, FormValues } from "../types";
 
 export const UserManagement = () => {
   const {
@@ -27,7 +27,6 @@ export const UserManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const [userToDelete, setUserToDelete] = useState<Profile | null>(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleOpenModal = (user: Profile | null = null) => {
     setSelectedUser(user);
@@ -41,18 +40,24 @@ export const UserManagement = () => {
 
   const handleOpenDeleteDialog = (user: Profile) => {
     setUserToDelete(user);
-    setShowDeleteDialog(true);
   };
 
   const handleCloseDeleteDialog = () => {
     setUserToDelete(null);
-    setShowDeleteDialog(false);
   };
 
   const handleConfirmDelete = async () => {
     if (userToDelete) {
       await handleDeleteUser(userToDelete.id);
       handleCloseDeleteDialog();
+    }
+  };
+
+  const handleFormSubmit = async (values: FormValues) => {
+    if (selectedUser) {
+      await handleUpdateUser(values);
+    } else {
+      await handleCreateUser(values);
     }
   };
 
@@ -93,16 +98,15 @@ export const UserManagement = () => {
 
       <UserFormModal
         isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        user={selectedUser}
-        onSubmit={selectedUser ? handleUpdateUser : handleCreateUser}
+        onOpenChange={setIsModalOpen}
+        userToEdit={selectedUser}
+        onSubmit={handleFormSubmit}
       />
 
       <UserDeleteDialog
-        isOpen={showDeleteDialog}
-        onClose={handleCloseDeleteDialog}
-        onConfirm={handleConfirmDelete}
-        user={userToDelete}
+        userToDelete={userToDelete}
+        onOpenChange={handleCloseDeleteDialog}
+        onConfirmDelete={handleConfirmDelete}
       />
     </div>
   );

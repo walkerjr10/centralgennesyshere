@@ -12,7 +12,7 @@ interface UserFormModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   userToEdit?: Profile | null;
-  onSubmit: () => Promise<void>;
+  onSubmit: (values: FormValues) => Promise<void>;
 }
 
 export function UserFormModal({ isOpen, onOpenChange, onSubmit, userToEdit }: UserFormModalProps) {
@@ -35,12 +35,11 @@ export function UserFormModal({ isOpen, onOpenChange, onSubmit, userToEdit }: Us
     setIsSubmitting(true);
     try {
       if (userToEdit) {
-        // Update existing user
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
             full_name: data.full_name,
-            username: data.username,  // Added username to the update operation
+            username: data.username,
             role: data.role,
             status: data.status
           })
@@ -53,7 +52,6 @@ export function UserFormModal({ isOpen, onOpenChange, onSubmit, userToEdit }: Us
           description: "As informações do usuário foram atualizadas com sucesso.",
         });
       } else {
-        // Create new user using Edge Function
         const { error } = await supabase.functions.invoke('create-user', {
           body: {
             email: data.email,
@@ -72,7 +70,7 @@ export function UserFormModal({ isOpen, onOpenChange, onSubmit, userToEdit }: Us
         });
       }
 
-      await onSubmit();
+      await onSubmit(data);
       onOpenChange(false);
     } catch (error: any) {
       toast({

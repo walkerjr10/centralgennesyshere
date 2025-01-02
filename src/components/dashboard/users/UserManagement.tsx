@@ -1,8 +1,6 @@
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Profile } from "../types";
+import { useUserManagement } from "@/hooks/use-user-management";
 import { UserFormModal } from "./UserFormModal";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -14,14 +12,23 @@ import { UserDeleteDialog } from "./UserDeleteDialog";
 const ITEMS_PER_PAGE = 10;
 
 export function UserManagement() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<Profile | undefined>(undefined);
-  const [userToDelete, setUserToDelete] = useState<Profile | null>(null);
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const {
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setStatusFilter,
+    currentPage,
+    setCurrentPage,
+    isModalOpen,
+    selectedUser,
+    userToDelete,
+    handleEditUser,
+    handleDeleteUser,
+    confirmDelete,
+    handleCloseModal,
+    handleSuccess,
+    setIsModalOpen,
+  } = useUserManagement();
 
   const { data: { data: totalProfiles } = {}, isLoading: countLoading } = useQuery({
     queryKey: ["profiles-count"],
@@ -43,7 +50,7 @@ export function UserManagement() {
         .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
 
       if (error) throw error;
-      return data as Profile[];
+      return data;
     },
   });
 
@@ -61,71 +68,6 @@ export function UserManagement() {
   });
 
   const totalPages = totalProfiles ? Math.ceil(totalProfiles / ITEMS_PER_PAGE) : 0;
-
-  const handleEditUser = (user: Profile) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
-  };
-
-  const handleDeleteUser = async (user: Profile) => {
-    setUserToDelete(user);
-  };
-
-  const confirmDelete = async () => {
-    if (!userToDelete) return;
-
-    try {
-      const { error: deleteAuthError } = await supabase.functions.invoke('delete-user', {
-        body: { userId: userToDelete.id }
-      });
-
-      if (deleteAuthError) throw deleteAuthError;
-
-      const { error: deleteProfileError } = await supabase
-        .from("profiles")
-        .delete()
-        .eq("id", userToDelete.id);
-
-      if (deleteProfileError) throw deleteProfileError;
-
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["profiles"] }),
-        queryClient.invalidateQueries({ queryKey: ["profiles-count"] })
-      ]);
-
-      toast({
-        title: "Usuário excluído",
-        description: "O usuário foi excluído com sucesso.",
-      });
-
-      const remainingItems = (totalProfiles || 0) - 1;
-      const newTotalPages = Math.ceil(remainingItems / ITEMS_PER_PAGE);
-      if (currentPage > newTotalPages && currentPage > 1) {
-        setCurrentPage(newTotalPages);
-      }
-
-    } catch (error: any) {
-      toast({
-        title: "Erro ao excluir usuário",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setUserToDelete(null);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedUser(undefined);
-  };
-
-  const handleSuccess = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["profiles"] });
-    await queryClient.invalidateQueries({ queryKey: ["profiles-count"] });
-    setIsModalOpen(false);
-    setSelectedUser(undefined);
-  };
 
   return (
     <div className="space-y-6">

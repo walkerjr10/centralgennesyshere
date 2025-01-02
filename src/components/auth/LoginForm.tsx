@@ -19,7 +19,7 @@ export const LoginForm = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await handleLogin();
+    await handleLogin(e);
   };
 
   return (

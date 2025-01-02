@@ -1,10 +1,11 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { UsersTableProps } from "../types";
 import { formatDate } from "@/lib/utils";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser, onDeleteUser }: UsersTableProps) => {
   const getStatusColor = (status: string | null) => {
@@ -71,7 +72,16 @@ export const UsersTable = ({ profiles, isLoading, filteredProfiles, onEditUser, 
               exit={{ opacity: 0, y: -20 }}
               className="hover:bg-[#4263EB]/5 transition-colors"
             >
-              <TableCell className="font-medium">{profile.full_name || '-'}</TableCell>
+              <TableCell className="font-medium">
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-[#4263EB]/10">
+                      <User className="h-4 w-4 text-[#4263EB]" />
+                    </AvatarFallback>
+                  </Avatar>
+                  {profile.full_name || '-'}
+                </div>
+              </TableCell>
               <TableCell>{profile.username || '-'}</TableCell>
               <TableCell>
                 <Badge

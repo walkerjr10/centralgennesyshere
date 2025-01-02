@@ -1,21 +1,16 @@
-import { motion } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "./password/PasswordInput";
-import { RememberMeCheckbox } from "./remember-me/RememberMeCheckbox";
-import { LoginButton } from "./login-button/LoginButton";
-import { SignupPrompt } from "./signup-prompt/SignupPrompt";
+import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RememberMeCheckbox } from "@/components/auth/remember-me/RememberMeCheckbox";
+import { SignupPrompt } from "@/components/auth/signup-prompt/SignupPrompt";
+import { PasswordInput } from "@/components/auth/password/PasswordInput";
+import { LoginButton } from "@/components/auth/login-button/LoginButton";
 
 export const LoginForm = () => {
-  const {
-    loading,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    handleLogin,
-    handleSignUp,
-  } = useAuth();
+  const { loading, email, setEmail, password, setPassword, handleLogin } = useAuth();
+  const [rememberMe, setRememberMe] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,40 +18,37 @@ export const LoginForm = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-md space-y-8"
-    >
-      <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-6">
+      <div className="space-y-4">
         <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
+            placeholder="exemplo@email.com"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="seu@email.com"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
             required
           />
         </div>
-
-        <PasswordInput value={password} onChange={setPassword} />
-
-        <div className="flex items-center justify-between">
-          <RememberMeCheckbox />
-          <a href="#" className="text-sm text-[#4263EB] hover:underline">
-            Esqueceu a senha?
-          </a>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Senha</Label>
+            <Button variant="link" className="px-0 font-normal text-xs text-[#4263EB]">
+              Esqueceu a senha?
+            </Button>
+          </div>
+          <PasswordInput
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </div>
-
-        <LoginButton loading={loading} />
-        <SignupPrompt onSignUp={handleSignUp} />
-      </form>
-    </motion.div>
+      </div>
+      <RememberMeCheckbox checked={rememberMe} onCheckedChange={setRememberMe} />
+      <LoginButton loading={loading} />
+      <SignupPrompt />
+    </form>
   );
 };

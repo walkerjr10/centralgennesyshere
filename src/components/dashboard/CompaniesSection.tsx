@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { LayoutGrid, List } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardHeader } from "./overview/DashboardHeader";
 import { CompanyTypeCard } from "./CompanyTypeCard";
+import { CompanyTypeList } from "./CompanyTypeList";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export const CompaniesSection = () => {
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  
   const { data: companies, isLoading } = useQuery({
     queryKey: ['companies'],
     queryFn: async () => {
@@ -49,21 +55,49 @@ export const CompaniesSection = () => {
 
   return (
     <div className="space-y-8">
-      <DashboardHeader 
-        title="Empresas" 
-        subtitle="Gerenciamento de empresas" 
-      />
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Object.entries(completeCompanyTypes).map(([type, count], index) => (
-          <CompanyTypeCard
-            key={type}
-            type={type}
-            count={count}
-            index={index}
-          />
-        ))}
+      <div className="flex items-center justify-between">
+        <DashboardHeader 
+          title="Empresas" 
+          subtitle="Gerenciamento de empresas" 
+        />
+        <ToggleGroup
+          type="single"
+          value={viewMode}
+          onValueChange={(value) => value && setViewMode(value as "grid" | "list")}
+          className="border rounded-md"
+        >
+          <ToggleGroupItem value="grid" aria-label="Grid view">
+            <LayoutGrid className="h-4 w-4" />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="list" aria-label="List view">
+            <List className="h-4 w-4" />
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
+      
+      {viewMode === "grid" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Object.entries(completeCompanyTypes).map(([type, count], index) => (
+            <CompanyTypeCard
+              key={type}
+              type={type}
+              count={count}
+              index={index}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {Object.entries(completeCompanyTypes).map(([type, count], index) => (
+            <CompanyTypeList
+              key={type}
+              type={type}
+              count={count}
+              index={index}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -12,11 +12,19 @@ const statusOptions = [
   { key: "suspended", label: "SUSPENSOS", color: "bg-red-500" }
 ];
 
+const roleOptions = [
+  { key: "all", label: "TODAS FUNÇÕES", color: "bg-[#4263EB]" },
+  { key: "admin", label: "ADMINISTRADOR", color: "bg-purple-500" },
+  { key: "user", label: "USUÁRIO", color: "bg-blue-500" }
+];
+
 export const UserSearch = ({ 
   searchTerm, 
   onSearchChange, 
   statusFilter, 
-  onStatusFilterChange 
+  onStatusFilterChange,
+  roleFilter,
+  onRoleFilterChange
 }: UserSearchProps) => {
   return (
     <div className="space-y-6">
@@ -44,38 +52,73 @@ export const UserSearch = ({
         </motion.div>
       </div>
       
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex gap-2 flex-wrap"
-      >
-        {statusOptions.map((status, index) => (
-          <motion.div
-            key={status.key}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ 
-              opacity: 1, 
-              x: 0,
-              transition: { delay: index * 0.1 }
-            }}
-          >
-            <Button
-              variant={statusFilter === status.key ? "default" : "outline"}
-              size="sm"
-              onClick={() => onStatusFilterChange(status.key)}
-              className={`
-                relative overflow-hidden transition-all duration-200
-                ${statusFilter === status.key 
-                  ? `bg-[#4263EB] text-white hover:bg-[#3451c7]` 
-                  : 'text-gray-600 hover:bg-[#4263EB]/5 hover:text-[#4263EB] hover:border-[#4263EB]'
-                }
-              `}
+      <div className="space-y-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex gap-2 flex-wrap"
+        >
+          {statusOptions.map((status, index) => (
+            <motion.div
+              key={status.key}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ 
+                opacity: 1, 
+                x: 0,
+                transition: { delay: index * 0.1 }
+              }}
             >
-              <span className="text-sm font-medium">{status.label}</span>
-            </Button>
-          </motion.div>
-        ))}
-      </motion.div>
+              <Button
+                variant={statusFilter === status.key ? "default" : "outline"}
+                size="sm"
+                onClick={() => onStatusFilterChange(status.key)}
+                className={`
+                  relative overflow-hidden transition-all duration-200
+                  ${statusFilter === status.key 
+                    ? `bg-[#4263EB] text-white hover:bg-[#3451c7]` 
+                    : 'text-gray-600 hover:bg-[#4263EB]/5 hover:text-[#4263EB] hover:border-[#4263EB]'
+                  }
+                `}
+              >
+                <span className="text-sm font-medium">{status.label}</span>
+              </Button>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex gap-2 flex-wrap"
+        >
+          {roleOptions.map((role, index) => (
+            <motion.div
+              key={role.key}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ 
+                opacity: 1, 
+                x: 0,
+                transition: { delay: index * 0.1 }
+              }}
+            >
+              <Button
+                variant={roleFilter === role.key ? "default" : "outline"}
+                size="sm"
+                onClick={() => onRoleFilterChange(role.key)}
+                className={`
+                  relative overflow-hidden transition-all duration-200
+                  ${roleFilter === role.key 
+                    ? `bg-[#4263EB] text-white hover:bg-[#3451c7]` 
+                    : 'text-gray-600 hover:bg-[#4263EB]/5 hover:text-[#4263EB] hover:border-[#4263EB]'
+                  }
+                `}
+              >
+                <span className="text-sm font-medium">{role.label}</span>
+              </Button>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </div>
   );
 };

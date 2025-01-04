@@ -24,6 +24,8 @@ export interface UserSearchProps {
   onSearchChange: (value: string) => void;
   statusFilter: string;
   onStatusFilterChange: (value: string) => void;
+  roleFilter: string;
+  onRoleFilterChange: (value: string) => void;
 }
 
 export interface UsersPaginationProps {

@@ -27,6 +27,7 @@ export const UserManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const [userToDelete, setUserToDelete] = useState<Profile | null>(null);
+  const [roleFilter, setRoleFilter] = useState("all");
 
   const handleOpenModal = (user: Profile | null = null) => {
     setSelectedUser(user);
@@ -61,6 +62,19 @@ export const UserManagement = () => {
     }
   };
 
+  const filteredUsers = users?.filter(user => {
+    const matchesSearch = searchTerm
+      ? user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.role?.toLowerCase().includes(searchTerm.toLowerCase())
+      : true;
+
+    const matchesStatus = statusFilter === "all" ? true : user.status === statusFilter;
+    const matchesRole = roleFilter === "all" ? true : user.role === roleFilter;
+
+    return matchesSearch && matchesStatus && matchesRole;
+  });
+
   if (error) {
     return <div>Error loading users: {error.message}</div>;
   }
@@ -73,6 +87,8 @@ export const UserManagement = () => {
           onSearchChange={setSearchTerm}
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
+          roleFilter={roleFilter}
+          onRoleFilterChange={setRoleFilter}
         />
         <button
           onClick={() => handleOpenModal()}
@@ -85,7 +101,7 @@ export const UserManagement = () => {
       <UsersTable
         profiles={users}
         isLoading={loading}
-        filteredProfiles={users}
+        filteredProfiles={filteredUsers}
         onEditUser={handleOpenModal}
         onDeleteUser={handleOpenDeleteDialog}
       />
